@@ -1,3 +1,3 @@
 # ansible_projeto1
 
-teste
+no playbook install_suricata.yml, substituir interface pela desejada
