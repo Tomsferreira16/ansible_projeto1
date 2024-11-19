@@ -1,1 +1,1 @@
-192.168.0.203 # servidor 
+192.168.0.203 ansible_user=tomas ansible_become_password=123

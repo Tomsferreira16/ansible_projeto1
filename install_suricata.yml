@@ -1,0 +1,45 @@
+---
+- name: Install and configure Suricata with rules and auto-start
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Update apt package index
+      apt:
+        update_cache: yes
+
+    - name: Install dependencies
+      apt:
+        name:
+          - software-properties-common
+        state: present
+
+    - name: Install Suricata
+      apt:
+        name: suricata
+        state: present
+
+    - name: Install Suricata rules
+      command: suricata-update
+      args:
+        warn: false
+
+    - name: Reload Suricata rules
+      command: suricata --build-info
+      args:
+        warn: false
+
+    - name: Verify Suricata installation
+      shell: suricata -V
+      register: suricata_version
+      changed_when: false
+
+    - name: Display Suricata version
+      debug:
+        msg: "{{ suricata_version.stdout }}"
+
+    - name: Enable and start Suricata service
+      systemd:
+        name: suricata
+        enabled: yes
+        state: started
