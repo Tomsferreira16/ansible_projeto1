@@ -18,11 +18,24 @@
     - name: Install Suricata rules
       command: suricata-update
 
-    - name: Update Suricata interface configuration
-      replace:
+    - name: Replace interface in Suricata config to enp0s3
+      lineinfile:
         path: /etc/suricata/suricata.yaml
-        regexp: '^  - interface:.*$'
-        replace: '  - interface: enp0s3'
+        regexp: '^#?\s*interface:.*'
+        line: 'interface: enp0s3'
+        owner: root
+        group: root
+        mode: 0644
+      notify: Restart Suricata
+
+    - name: Replace default rule path in Suricata config
+      lineinfile:
+        path: /etc/suricata/suricata.yaml
+        regexp: '^#?\s*default-rule-path:.*'
+        line: 'default-rule-path: /var/lib/suricata/rules'
+        owner: root
+        group: root
+        mode: 0644
       notify: Restart Suricata
 
     - name: Verify Suricata installation (check version)
@@ -34,6 +47,17 @@
     - name: Show Suricata version
       debug:
         msg: "Suricata version: {{ suricata_version.stdout }}"
+
+    - name: Run Suricata configuration test
+      command: suricata -T
+      register: suricata_test
+      changed_when: false
+      failed_when: suricata_test.rc != 0
+      ignore_errors: yes
+
+    - name: Show Suricata config test result
+      debug:
+        msg: "Suricata config test result: {{ suricata_test.stdout }}"
 
     - name: Enable and start Suricata service
       service:
