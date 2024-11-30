@@ -261,14 +261,14 @@ class SuricataAnsibleGUI:
     # Run Ansible playbook to add the custom rule
         try:
             subprocess.run(
-            [
+                [
                 "ansible-playbook", 
                 "-i", self.inventory_file, 
                 "add_custom_rule.yml", 
-                "-e", f"custom_rule={rule}"
-            ],
-            check=True
-        )
+                "-e", f"custom_rule={rule}"  # Pass the whole rule as a variable
+                ],
+                check=True
+                            )
             messagebox.showinfo("Success", "Custom rule added.")
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"Failed to add custom rule: {e}")

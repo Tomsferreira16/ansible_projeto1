@@ -9,11 +9,12 @@
         state: directory
         mode: '0755'
 
-    - name: Create or update the custom rules file
+    - name: Force append the custom rule to the file
       lineinfile:
         path: "/etc/suricata/rules/custom.rules"
         line: "{{ custom_rule }}"
         create: yes
+        insertafter: EOF  
         mode: '0644'
       vars:
-        custom_rule: "{{ custom_rule }}"  # Ensure this variable is passed in correctly
+        custom_rule: "{{ custom_rule }}"
