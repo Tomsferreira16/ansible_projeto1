@@ -8,6 +8,6 @@
         path: "/etc/suricata/rules/custom.rules"
       register: custom_rules
 
-    - name: Return custom rules content
+    - name: Decode and return custom rules content
       debug:
         msg: "{{ custom_rules.content | b64decode }}"

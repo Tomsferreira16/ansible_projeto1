@@ -12,8 +12,8 @@
     - name: Create or update the custom rules file
       lineinfile:
         path: "/etc/suricata/rules/custom.rules"
-        line: "{{ rule }}"
+        line: "{{ custom_rule }}"
         create: yes
         mode: '0644'
       vars:
-        rule: "{{ custom_rule }}"
+        custom_rule: "{{ custom_rule }}"  # Ensure this variable is passed in correctly
