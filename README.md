@@ -1,3 +1,3 @@
 # ansible_projeto1
 
-no playbook install_suricata.yml, substituir interface pela desejada
+gui para o deploy do suricata num servidor usando ansible
