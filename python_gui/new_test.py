@@ -12,7 +12,7 @@ class SuricataAnsibleGUI:
 
         # Path to the inventory file
         self.inventory_file = "/home/tomas/ansible_projeto1/inventory"
-        
+
         # Creating the Notebook for tabs
         self.notebook = ttk.Notebook(root)
         self.notebook.pack(fill=tk.BOTH, expand=True)
@@ -152,6 +152,7 @@ class SuricataAnsibleGUI:
             # Handle any IO errors when writing to the file
             messagebox.showerror("Error", "Failed to write to inventory file.")
 
+
     def delete_server(self):
         try:
             selected_line = self.inventory_text.get(tk.SEL_FIRST, tk.SEL_LAST).strip()
@@ -168,6 +169,16 @@ class SuricataAnsibleGUI:
             messagebox.showerror("Error", "Select a server to delete.")
         except IOError:
             messagebox.showerror("Error", "Failed to delete server from inventory file.")
+    
+    def load_inventory(self):
+        try:
+            with open(self.inventory_file, "r") as file:
+                inventory_content = file.read()
+            self.inventory_text.delete(1.0, tk.END)  # Clear the text box
+            self.inventory_text.insert(tk.END, inventory_content)  # Insert the inventory content
+        except IOError:
+            messagebox.showerror("Error", "Failed to load inventory file.")
+
 
     # ---------------------- Install Suricata ----------------------
     def install_suricata(self):
@@ -181,10 +192,10 @@ class SuricataAnsibleGUI:
 
         try:
             # Run the Ansible playbook with the interface as an extra variable
-            subprocess.run([ 
+            subprocess.run([
                 "ansible-playbook", 
                 "-i", self.inventory_file, 
-                playbook_path, 
+                playbook_path,
                 "-e", f"network_interface={interface}"
             ], check=True)
             messagebox.showinfo("Success", f"Suricata installation started on interface: {interface}")
@@ -199,13 +210,13 @@ class SuricataAnsibleGUI:
             return
         try:
             with open(log_file, "r") as file:
-                logs = file.readlines()
-            self.log_text.delete(1.0, tk.END)
-            self.log_text.insert(tk.END, "".join(logs))
-        except IOError:
-            messagebox.showerror("Error", "Failed to read Suricata log file.")
+                logs = file.read()
+                self.log_text.delete(1.0, tk.END)  # Clear the text box
+                self.log_text.insert(tk.END, logs)  # Insert the logs
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to read log file: {e}")
 
-    # ---------------------- Custom Rule Functions ----------------------
+    # ---------------------- Custom Rules Functions ----------------------
     def add_rule(self):
         action = self.action_var.get()
         protocol = self.protocol_entry.get()
@@ -216,24 +227,37 @@ class SuricataAnsibleGUI:
         msg = self.msg_entry.get()
         sid = self.sid_entry.get()
 
-        # Validate inputs
-        if not action or not protocol or not src_ip or not dst_ip or not msg or not sid:
-            messagebox.showerror("Error", "All fields must be filled.")
+        # Ensure all fields are filled
+        if not all([action, protocol, src_ip, src_port, dst_ip, dst_port, msg, sid]):
+            messagebox.showerror("Error", "All fields must be filled out.")
             return
 
         rule = f"{action} {protocol} {src_ip} {src_port} -> {dst_ip} {dst_port} (msg:\"{msg}\"; sid:{sid};)\n"
+        custom_rules_path = "/etc/suricata/rules/custom.rules"
+
         try:
-            with open("/etc/suricata/rules/custom.rules", "a") as file:
+            with open(custom_rules_path, "a") as file:
                 file.write(rule)
+            self.view_custom_rules()
             messagebox.showinfo("Success", "Custom rule added.")
         except IOError:
             messagebox.showerror("Error", "Failed to add custom rule.")
 
     def view_custom_rules(self):
+        custom_rules_path = "/etc/suricata/rules/custom.rules"
+        if not os.path.exists(custom_rules_path):
+            messagebox.showerror("Error", "Custom rules file not found.")
+            return
         try:
-            with open("/etc/suricata/rules/custom.rules", "r") as file:
-                rules = file.readlines()
-            self.custom_rules_text.delete(1.0, tk.END)
-            self.custom_rules_text.insert(tk.END, "".join(rules))
-        except IOError:
-            messagebox.showerror("Error", "Failed to read custom rules file.")
+            with open(custom_rules_path, "r") as file:
+                custom_rules = file.read()
+                self.custom_rules_text.delete(1.0, tk.END)
+                self.custom_rules_text.insert(tk.END, custom_rules)
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to read custom rules file: {e}")
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    gui = SuricataAnsibleGUI(root)
+    root.mainloop()
