@@ -22,7 +22,7 @@
       lineinfile:
         path: /etc/suricata/suricata.yaml
         regexp: '^#?\s*interface:.*'
-        line: "interface: {{ network_interface }}" 
+        line: "interface: {{ network_interface }}"
         owner: root
         group: root
         mode: 0644
