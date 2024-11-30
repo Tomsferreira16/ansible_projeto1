@@ -253,8 +253,9 @@ class SuricataAnsibleGUI:
         if not all([action, protocol, src_ip, src_port, dst_ip, dst_port, msg, sid]):
             messagebox.showerror("Error", "All fields must be filled out.")
             return
-
         rule = f"{action} {protocol} {src_ip} {src_port} -> {dst_ip} {dst_port} (msg:\"{msg}\"; sid:{sid};)\n"
+        print(f"Generated rule: {rule}")
+
         custom_rules_path = "/etc/suricata/rules/custom.rules"
 
     # Run Ansible playbook to add the custom rule
