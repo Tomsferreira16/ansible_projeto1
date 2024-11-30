@@ -1,0 +1,13 @@
+---
+- name: View custom Suricata rules
+  hosts: all
+  become: yes
+  tasks:
+    - name: Read the custom rules file
+      slurp:
+        path: "/etc/suricata/rules/custom.rules"
+      register: custom_rules
+
+    - name: Return custom rules content
+      debug:
+        msg: "{{ custom_rules.content | b64decode }}"

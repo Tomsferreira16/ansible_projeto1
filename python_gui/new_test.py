@@ -249,7 +249,7 @@ class SuricataAnsibleGUI:
         msg = self.msg_entry.get()
         sid = self.sid_entry.get()
 
-        # Ensure all fields are filled
+    # Ensure all fields are filled
         if not all([action, protocol, src_ip, src_port, dst_ip, dst_port, msg, sid]):
             messagebox.showerror("Error", "All fields must be filled out.")
             return
@@ -257,26 +257,48 @@ class SuricataAnsibleGUI:
         rule = f"{action} {protocol} {src_ip} {src_port} -> {dst_ip} {dst_port} (msg:\"{msg}\"; sid:{sid};)\n"
         custom_rules_path = "/etc/suricata/rules/custom.rules"
 
+    # Run Ansible playbook to add the custom rule
         try:
-            with open(custom_rules_path, "a") as file:
-                file.write(rule)
-            self.view_custom_rules()
+            subprocess.run(
+            [
+                "ansible-playbook", 
+                "-i", self.inventory_file, 
+                "add_custom_rule.yml", 
+                "-e", f"custom_rule={rule}"
+            ],
+            check=True
+        )
             messagebox.showinfo("Success", "Custom rule added.")
-        except IOError:
-            messagebox.showerror("Error", "Failed to add custom rule.")
-
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"Failed to add custom rule: {e}")
+    
+    # View Custom Rules playbook
     def view_custom_rules(self):
-        custom_rules_path = "/etc/suricata/rules/custom.rules"
-        if not os.path.exists(custom_rules_path):
-            messagebox.showerror("Error", "Custom rules file not found.")
-            return
         try:
-            with open(custom_rules_path, "r") as file:
-                custom_rules = file.read()
-                self.custom_rules_text.delete(1.0, tk.END)
-                self.custom_rules_text.insert(tk.END, custom_rules)
+            result = subprocess.run(
+            [
+                "ansible-playbook", 
+                "-i", self.inventory_file, 
+                "view_custom_rules.yml"
+            ],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        # The output from the playbook (custom rules content)
+            playbook_output = result.stdout
+        
+        # Display the content of custom rules in the text box
+            self.custom_rules_text.delete(1.0, tk.END)  # Clear the text box
+            self.custom_rules_text.insert(tk.END, playbook_output)  # Insert the playbook output
+        
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"Ansible playbook execution failed: {e}")
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to read custom rules file: {e}")
+            messagebox.showerror("Error", f"Failed to view custom rules: {e}")
+
+
+    
 
 
 if __name__ == "__main__":

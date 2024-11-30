@@ -1,0 +1,19 @@
+---
+- name: Add custom Suricata rule
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure the custom rules directory exists
+      file:
+        path: "/etc/suricata/rules"
+        state: directory
+        mode: '0755'
+
+    - name: Create or update the custom rules file
+      lineinfile:
+        path: "/etc/suricata/rules/custom.rules"
+        line: "{{ rule }}"
+        create: yes
+        mode: '0644'
+      vars:
+        rule: "{{ custom_rule }}"
