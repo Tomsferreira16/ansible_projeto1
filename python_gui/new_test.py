@@ -45,11 +45,8 @@ class SuricataAnsibleGUI:
         self.inventory_text = tk.Text(self.inventory_frame, height=10, width=50)
         self.inventory_text.grid(row=5, columnspan=2)
 
-        self.modify_button = tk.Button(self.inventory_frame, text="Modify Server", command=self.modify_server)
-        self.modify_button.grid(row=6, column=0)
-
         self.delete_button = tk.Button(self.inventory_frame, text="Delete Server", command=self.delete_server)
-        self.delete_button.grid(row=6, column=1)
+        self.delete_button.grid(row=6, columnspan=2)
 
         # ---------------------- Install Suricata Tab ----------------------
         self.install_frame = ttk.Frame(self.notebook, padding="10")
@@ -147,26 +144,7 @@ class SuricataAnsibleGUI:
         except IOError:
             messagebox.showerror("Error", "Failed to write to inventory file.")
 
-    def modify_server(self):
-        try:
-            selected_line = self.inventory_text.get(tk.SEL_FIRST, tk.SEL_LAST).strip()
-            new_server_data = f"{self.ip_entry.get()} ansible_user={self.user_entry.get()} ansible_become_password={self.password_entry.get()}"
-            with open(self.inventory_file, "r+") as file:
-                lines = file.readlines()
-                file.seek(0)
-                for line in lines:
-                    if line.strip() != selected_line:
-                        file.write(line)
-                    else:
-                        file.write(new_server_data + "\n")
-                file.truncate()
-            self.load_inventory()
-            messagebox.showinfo("Success", "Server modified.")
-        except tk.TclError:
-            messagebox.showerror("Error", "Select a server to modify.")
-        except IOError:
-            messagebox.showerror("Error", "Failed to modify inventory file.")
-
+   
     def delete_server(self):
         try:
             selected_line = self.inventory_text.get(tk.SEL_FIRST, tk.SEL_LAST).strip()
