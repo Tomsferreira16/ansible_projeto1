@@ -205,17 +205,38 @@ class SuricataAnsibleGUI:
 
     # ---------------------- View Suricata Logs ---------------------
     def view_logs(self):
-        log_file = "/var/log/suricata/fast.log"  # Adjust this path if needed
-        if not os.path.exists(log_file):
-            messagebox.showerror("Error", "Log file not found. Please ensure Suricata is running.")
-            return
+        # Path to your playbook
+        playbook_path = "C:/Users/tomsf/ansible_projeto1/read_suricata_logs.yml"  # Update this path if necessary
+
         try:
-            with open(log_file, "r") as file:
-                logs = file.read()
+            # Run the Ansible playbook and capture the output
+            result = subprocess.run(
+                [
+                    "ansible-playbook", 
+                    "-i", self.inventory_file, 
+                    playbook_path, 
+                    "--extra-vars", "log_path=/var/log/suricata/fast.log"
+                ],
+                capture_output=True,
+                text=True,
+                check=True
+            )
+
+            # The output of the playbook (stdout)
+            playbook_output = result.stdout
+
+            # Check if the playbook output contains the logs or an error message
+            if "Error: fast.log file not found." in playbook_output:
+                messagebox.showerror("Error", "Suricata fast.log file not found.")
+            else:
+                # Display the content of fast.log in the text widget
                 self.log_text.delete(1.0, tk.END)  # Clear the text box
-                self.log_text.insert(tk.END, logs)  # Insert the logs
+                self.log_text.insert(tk.END, playbook_output)  # Insert the playbook output
+
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"Ansible playbook execution failed: {e}")
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to read log file: {e}")
+            messagebox.showerror("Error", f"Failed to view Suricata logs: {e}")
 
     # ---------------------- Custom Rules Functions ----------------------
     def add_rule(self):
