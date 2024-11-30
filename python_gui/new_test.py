@@ -206,7 +206,7 @@ class SuricataAnsibleGUI:
     # ---------------------- View Suricata Logs ---------------------
     def view_logs(self):
         # Path to your playbook
-        playbook_path = "C:/Users/tomsf/ansible_projeto1/read_suricata_logs.yml"  # Update this path if necessary
+        playbook_path = "/home/tomas/ansible_projeto1/read_log.yml"  # Update this path if necessary
 
         try:
             # Run the Ansible playbook and capture the output
