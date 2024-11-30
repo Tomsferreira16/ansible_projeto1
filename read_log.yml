@@ -1,0 +1,12 @@
+---
+- name: Read Suricata fast.log file
+  hosts: all
+  become: true  # Run as root (necessary for accessing logs)
+  tasks:
+    - name: Cat the Suricata fast.log file
+      command: cat /var/log/suricata/fast.log
+      register: fast_log_contents  # Store the result
+
+    - name: Display fast.log content
+      debug:
+        msg: "{{ fast_log_contents.stdout }}"  # Print the contents
