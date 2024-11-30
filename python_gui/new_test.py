@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import subprocess
 import os
+import json
 
 
 class SuricataAnsibleGUI:
