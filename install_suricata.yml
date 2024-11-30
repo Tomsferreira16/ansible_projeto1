@@ -18,11 +18,11 @@
     - name: Install Suricata rules
       command: suricata-update
 
-    - name: Replace interface in Suricata config to enp0s3
+    - name: Replace interface in Suricata config
       lineinfile:
         path: /etc/suricata/suricata.yaml
         regexp: '^#?\s*interface:.*'
-        line: 'interface: enp0s3'
+        line: "interface: {{ network_interface }}"  # Use the passed variable
         owner: root
         group: root
         mode: 0644
