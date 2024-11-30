@@ -1,12 +1,25 @@
 ---
 - name: Read Suricata fast.log file
   hosts: all
-  become: true  # Run as root (necessary for accessing logs)
+  become: true
   tasks:
-    - name: Cat the Suricata fast.log file
-      command: cat /var/log/suricata/fast.log
-      register: fast_log_contents  # Store the result
+    - name: Check if fast.log exists
+      stat:
+        path: /var/log/suricata/fast.log
+      register: fast_log_stat
 
-    - name: Display fast.log content
+    - name: Cat the Suricata fast.log file if it exists
+      command: cat /var/log/suricata/fast.log
+      when: fast_log_stat.stat.exists
+      register: fast_log_contents
+
+    - name: Display fast.log content if it exists
       debug:
-        msg: "{{ fast_log_contents.stdout }}"  # Print the contents
+        msg: "{{ fast_log_contents.stdout }}"
+      when: fast_log_stat.stat.exists
+
+    - name: Error message if fast.log does not exist
+      debug:
+        msg: "Error: fast.log file not found."
+      when: not fast_log_stat.stat.exists
+
