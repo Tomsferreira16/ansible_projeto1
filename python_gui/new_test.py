@@ -18,6 +18,28 @@ class SuricataAnsibleGUI:
         self.notebook = ttk.Notebook(root)
         self.notebook.pack(fill=tk.BOTH, expand=True)
 
+        # ---------------------- Setup Tab ----------------------
+        self.setup_frame = ttk.Frame(self.notebook, padding="10")
+        self.notebook.add(self.setup_frame, text="Setup")
+
+        self.key_name_label = tk.Label(self.setup_frame, text="SSH Key Name:")
+        self.key_name_label.grid(row=0, column=0)
+        self.key_name_entry = tk.Entry(self.setup_frame)
+        self.key_name_entry.grid(row=0, column=1)
+
+        self.comment_label = tk.Label(self.setup_frame, text="SSH Key Comment:")
+        self.comment_label.grid(row=1, column=0)
+        self.comment_entry = tk.Entry(self.setup_frame)
+        self.comment_entry.grid(row=1, column=1)
+
+        self.ip_label = tk.Label(self.setup_frame, text="Server IPs (comma separated):")
+        self.ip_label.grid(row=2, column=0)
+        self.ip_entry = tk.Entry(self.setup_frame)
+        self.ip_entry.grid(row=2, column=1)
+
+        self.create_key_button = tk.Button(self.setup_frame, text="Create & Copy SSH Key", command=self.create_and_copy_key)
+        self.create_key_button.grid(row=3, columnspan=2)
+
         # ---------------------- Inventory Tab ----------------------
         self.inventory_frame = ttk.Frame(self.notebook, padding="10")
         self.notebook.add(self.inventory_frame, text="Inventory")
@@ -126,6 +148,55 @@ class SuricataAnsibleGUI:
         self.custom_rules_text = tk.Text(self.rules_frame, height=10, width=50)
         self.custom_rules_text.grid(row=10, columnspan=2)
 
+
+    # ---------------------- Setup SSH Key Tab ----------------------
+    def create_and_copy_key(self):
+        key_name = self.key_name_entry.get()
+        comment = self.comment_entry.get()
+        ips = self.ip_entry.get()
+
+        if not key_name or not comment or not ips:
+            messagebox.showerror("Error", "All fields must be filled out.")
+            return
+
+        ips = ips.split(",")  # Split the IPs by comma
+
+        try:
+            # Check if the SSH key already exists
+            key_exists = os.path.isfile(f"~/.ssh/{key_name}")  # Check if private key exists
+
+            if key_exists:
+                # If the key exists, use it directly
+                messagebox.showinfo("Info", f"Using existing SSH key: {key_name}")
+            else:
+                # If the key does not exist, generate a new one
+                subprocess.run([
+                    "ssh-keygen", "-t", "ed25519", "-f", f"~/.ssh/{key_name}", "-C", comment, "-N", ""
+                ], check=True)
+                messagebox.showinfo("Info", f"Created new SSH key: {key_name}")
+
+            # Step 2: Copy the public key to the remote servers
+            for ip in ips:
+                ip = ip.strip()  # Clean up the IP
+                subprocess.run(["ssh-copy-id", "-i", f"~/.ssh/{key_name}.pub", ip], check=True)
+
+            # Step 3: Add the private key to the SSH agent
+            subprocess.run(["eval", "$(ssh-agent -s)"], check=True, shell=True)  # Start the SSH agent
+            subprocess.run(["ssh-add", f"~/.ssh/{key_name}"], check=True)  # Add the private key to the agent
+
+            # Step 4: Create an alias for the ssh-agent setup and add it to .bashrc for persistence
+            alias_command = "alias ssha='eval $(ssh-agent) && ssh-add'"
+            with open(os.path.expanduser("~/.bashrc"), "a") as bashrc_file:
+                bashrc_file.write(f"\n{alias_command}\n")
+
+            # Inform the user of success
+            messagebox.showinfo("Success", "SSH Key copied to servers and SSH agent configured.")
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"An error occurred: {e}")
+        except IOError as e:
+            messagebox.showerror("Error", f"An error occurred when writing to .bashrc: {e}")
+
+
     # ---------------------- Inventory Functions ----------------------
     def save_server(self):
         # Get the input values
@@ -147,98 +218,81 @@ class SuricataAnsibleGUI:
             
             # Reload the inventory and show a success message
             self.load_inventory()
-            messagebox.showinfo("Success", "New server added.")
-        
-        except IOError:
-            # Handle any IO errors when writing to the file
-            messagebox.showerror("Error", "Failed to write to inventory file.")
+            messagebox.showinfo("Success", f"Server {ip} added to inventory.")
+        except IOError as e:
+            messagebox.showerror("Error", f"An error occurred: {e}")
+
+
+    def load_inventory(self):
+        try:
+            # Read the inventory file and display its contents in the text widget
+            with open(self.inventory_file, "r") as file:
+                inventory = file.read()
+
+            self.inventory_text.delete(1.0, tk.END)  # Clear the current content
+            self.inventory_text.insert(tk.END, inventory)  # Insert the new content
+        except IOError as e:
+            messagebox.showerror("Error", f"An error occurred while reading the inventory file: {e}")
 
 
     def delete_server(self):
         try:
-            selected_line = self.inventory_text.get(tk.SEL_FIRST, tk.SEL_LAST).strip()
-            with open(self.inventory_file, "r+") as file:
-                lines = file.readlines()
-                file.seek(0)
-                for line in lines:
-                    if line.strip() != selected_line:
-                        file.write(line)
-                file.truncate()
-            self.load_inventory()
-            messagebox.showinfo("Success", "Server deleted.")
-        except tk.TclError:
-            messagebox.showerror("Error", "Select a server to delete.")
-        except IOError:
-            messagebox.showerror("Error", "Failed to delete server from inventory file.")
-    
-    def load_inventory(self):
-        try:
+            # Get the IP address to delete
+            ip = self.ip_entry.get()
+
+            if not ip:
+                messagebox.showerror("Error", "Please enter an IP address to delete.")
+                return
+
+            # Read the inventory file and remove the line containing the IP address
             with open(self.inventory_file, "r") as file:
-                inventory_content = file.read()
-            self.inventory_text.delete(1.0, tk.END)  # Clear the text box
-            self.inventory_text.insert(tk.END, inventory_content)  # Insert the inventory content
-        except IOError:
-            messagebox.showerror("Error", "Failed to load inventory file.")
+                lines = file.readlines()
+
+            with open(self.inventory_file, "w") as file:
+                for line in lines:
+                    if ip not in line:
+                        file.write(line)
+
+            # Reload the inventory and show a success message
+            self.load_inventory()
+            messagebox.showinfo("Success", f"Server {ip} deleted from inventory.")
+        except IOError as e:
+            messagebox.showerror("Error", f"An error occurred: {e}")
 
 
     # ---------------------- Install Suricata ----------------------
     def install_suricata(self):
-        playbook_path = os.path.expanduser("~/ansible_projeto1/install_suricata.yml")
-        interface = self.interface_entry.get()  # Get the interface input from the user
+        interface = self.interface_entry.get()
 
-        # Check if the interface field is not empty
         if not interface:
-            messagebox.showerror("Error", "Network interface is required.")
+            messagebox.showerror("Error", "Please provide a network interface.")
             return
 
         try:
-            # Run the Ansible playbook with the interface as an extra variable
+            # Run the Ansible playbook to install Suricata
             subprocess.run([
-                "ansible-playbook", 
-                "-i", self.inventory_file, 
-                playbook_path,
-                "-e", f"network_interface={interface}"
+                "ansible-playbook", "-i", self.inventory_file, "install_suricata.yml", "--extra-vars", f"interface={interface}"
             ], check=True)
-            messagebox.showinfo("Success", f"Suricata installation started on interface: {interface}")
-        except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"Failed to install Suricata: {e}")
 
-    # ---------------------- View Suricata Logs ---------------------
+            messagebox.showinfo("Success", "Suricata installation initiated.")
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"An error occurred while running the playbook: {e}")
+
+
+    # ---------------------- Suricata Logs ----------------------
     def view_logs(self):
-        # Path to your playbook
-        playbook_path = "/home/tomas/ansible_projeto1/read_log.yml"  # Update this path if necessary
-
         try:
-            # Run the Ansible playbook and capture the output
-            result = subprocess.run(
-                [
-                    "ansible-playbook", 
-                    "-i", self.inventory_file, 
-                    playbook_path, 
-                    "--extra-vars", "log_path=/var/log/suricata/fast.log"
-                ],
-                capture_output=True,
-                text=True,
-                check=True
-            )
+            # Read the Suricata logs and display them
+            with open("/var/log/suricata/suricata.log", "r") as file:
+                logs = file.read()
 
-            # The output of the playbook (stdout)
-            playbook_output = result.stdout
+            self.log_text.delete(1.0, tk.END)  # Clear the current content
+            self.log_text.insert(tk.END, logs)  # Insert the new content
+        except IOError as e:
+            messagebox.showerror("Error", f"An error occurred while reading the log file: {e}")
 
-            # Check if the playbook output contains the logs or an error message
-            if "Error: fast.log file not found." in playbook_output:
-                messagebox.showerror("Error", "Suricata fast.log file not found.")
-            else:
-                # Display the content of fast.log in the text widget
-                self.log_text.delete(1.0, tk.END)  # Clear the text box
-                self.log_text.insert(tk.END, playbook_output)  # Insert the playbook output
 
-        except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"Ansible playbook execution failed: {e}")
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to view Suricata logs: {e}")
-
-    # ---------------------- Custom Rules Functions ----------------------
+    # ---------------------- Custom Rules ----------------------
     def add_rule(self):
         action = self.action_var.get()
         protocol = self.protocol_entry.get()
@@ -249,60 +303,39 @@ class SuricataAnsibleGUI:
         msg = self.msg_entry.get()
         sid = self.sid_entry.get()
 
-    # Ensure all fields are filled
-        if not all([action, protocol, src_ip, src_port, dst_ip, dst_port, msg, sid]):
+        if not action or not protocol or not src_ip or not src_port or not dst_ip or not dst_port or not msg or not sid:
             messagebox.showerror("Error", "All fields must be filled out.")
             return
+
         rule = f"{action} {protocol} {src_ip} {src_port} -> {dst_ip} {dst_port} (msg:\"{msg}\"; sid:{sid};)\n"
-        print(f"Generated rule: {rule}")
-
-        custom_rules_path = "/etc/suricata/rules/custom.rules"
-
-    # Run Ansible playbook to add the custom rule
+        
         try:
-            subprocess.run(
-                [
-                "ansible-playbook", 
-                "-i", self.inventory_file, 
-                "add_custom_rule.yml", 
-                "-e", f"custom_rule={rule}"  # Pass the whole rule as a variable
-                ],
-                check=True
-                            )
+            # Append the custom rule to the Suricata rules file
+            with open("/etc/suricata/rules/custom.rules", "a") as file:
+                file.write(rule)
+            
+            # Display the updated rules in the text widget
+            self.view_custom_rules()
+
             messagebox.showinfo("Success", "Custom rule added.")
-        except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"Failed to add custom rule: {e}")
-    
-    # View Custom Rules playbook
+        except IOError as e:
+            messagebox.showerror("Error", f"An error occurred while adding the rule: {e}")
+
+
     def view_custom_rules(self):
         try:
-            result = subprocess.run(
-            [
-                "ansible-playbook", 
-                "-i", self.inventory_file, 
-                "view_custom_rules.yml"
-            ],
-            capture_output=True,
-            text=True,
-            check=True
-        )
-        # The output from the playbook (custom rules content)
-            playbook_output = result.stdout
-        
-        # Display the content of custom rules in the text box
-            self.custom_rules_text.delete(1.0, tk.END)  # Clear the text box
-            self.custom_rules_text.insert(tk.END, playbook_output)  # Insert the playbook output
-        
-        except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"Ansible playbook execution failed: {e}")
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to view custom rules: {e}")
+            # Read the custom rules and display them
+            with open("/etc/suricata/rules/custom.rules", "r") as file:
+                custom_rules = file.read()
+
+            self.custom_rules_text.delete(1.0, tk.END)  # Clear the current content
+            self.custom_rules_text.insert(tk.END, custom_rules)  # Insert the new content
+        except IOError as e:
+            messagebox.showerror("Error", f"An error occurred while reading the custom rules: {e}")
 
 
-    
-
-
+# ---------------------- Main Program ----------------------
 if __name__ == "__main__":
     root = tk.Tk()
-    gui = SuricataAnsibleGUI(root)
+    app = SuricataAnsibleGUI(root)
     root.mainloop()
