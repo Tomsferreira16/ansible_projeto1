@@ -284,15 +284,40 @@ class SuricataAnsibleGUI:
 
     # ---------------------- Suricata Logs ----------------------
     def view_logs(self):
-        try:
-            # Read the Suricata logs and display them
-            with open("/var/log/suricata/suricata.log", "r") as file:
-                logs = file.read()
+        # Path to your playbook
+        playbook_path = "/home/tomas/ansible_projeto1/read_log.yml"  # Update this path if necessary
 
-            self.log_text.delete(1.0, tk.END)  # Clear the current content
-            self.log_text.insert(tk.END, logs)  # Insert the new content
-        except IOError as e:
-            messagebox.showerror("Error", f"An error occurred while reading the log file: {e}")
+        try:
+            # Run the Ansible playbook and capture the output
+            result = subprocess.run(
+                [
+                    "ansible-playbook", 
+                    "-i", self.inventory_file, 
+                    playbook_path, 
+                    "--extra-vars", "log_path=/var/log/suricata/fast.log"
+                ],
+                capture_output=True,
+                text=True,
+                check=True
+            )
+
+            # The output of the playbook (stdout)
+            playbook_output = result.stdout
+
+            # Check if the playbook output contains the logs or an error message
+            if "Error: fast.log file not found." in playbook_output:
+                messagebox.showerror("Error", "Suricata fast.log file not found.")
+            else:
+                # Display the content of fast.log in the text widget
+                self.log_text.delete(1.0, tk.END)  # Clear the text box
+                self.log_text.insert(tk.END, playbook_output)  # Insert the playbook output
+
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"Ansible playbook execution failed: {e}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to view Suricata logs: {e}")
+
+
 
 
     # ---------------------- Custom Rules ----------------------
