@@ -8,12 +8,13 @@
         path: /var/log/suricata/fast.log
       register: fast_log_stat
 
-    - name: Cat the Suricata fast.log file if it exists
-      command: cat /var/log/suricata/fast.log | jq .
+    - name: Display fast.log content if it exists
+      shell: cat /var/log/suricata/fast.log | awk '{$1=$1;print}'  # Trim and normalize whitespace
       when: fast_log_stat.stat.exists
       register: fast_log_contents
+      changed_when: false
 
-    - name: Display fast.log content if it exists
+    - name: Output fast.log content
       debug:
         msg: "{{ fast_log_contents.stdout }}"
       when: fast_log_stat.stat.exists
@@ -22,4 +23,3 @@
       debug:
         msg: "Error: fast.log file not found."
       when: not fast_log_stat.stat.exists
-
