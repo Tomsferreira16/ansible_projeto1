@@ -155,6 +155,9 @@ class SuricataAnsibleGUI:
         comment = self.comment_entry.get()
         ips = self.ip_entry.get()
 
+        # Debugging print to check the raw inputs
+        print(f"Key Name: '{key_name}', Comment: '{comment}', IPs: '{ips}'")
+
         if not key_name or not comment or not ips:
             messagebox.showerror("Error", "All fields must be filled out.")
             return
