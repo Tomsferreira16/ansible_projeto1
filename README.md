@@ -1,6 +1,24 @@
 # ansible_projeto1
 
-comando para transofmrar os caminhos </> windows para unix - dos2unix my_script.py
+setup tab	
+	-generate ssh key	
+	-add the key_name.pub to the where we install suricata
+	-eval $(ssh-agent)
+	-ssh-add ~/.ssh/key_name(private)
+	-alias ssha='eval $(ssh-agent) && ssh-add'
 
+inventory tab
+	-you can a new server (ip, user, password)
+	-Load the inventory file (cat)
+	-delete server (by selecting with the mouse)
 
-gui para o deploy do suricata num servidor usando ansible
+install suricata
+	-input the interface that suricata is using
+
+suricata logs
+	-view the /var/log/suricata/fast.log
+
+custom rules tab
+	-add custom rule
+		action, protocol, source ip, source port, dest ip, dest port ,message, sid
+	-view custom rules (/etc/suricata/rules/custom.rules)
