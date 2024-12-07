@@ -8,18 +8,23 @@
         path: /var/log/suricata/fast.log
       register: fast_log_stat
 
-    - name: Cat the Suricata fast.log file if it exists
-      command: cat /var/log/suricata/fast.log
+    - name: Ensure jq is installed
+      apt:
+        name: jq
+        state: present
       when: fast_log_stat.stat.exists
-      register: fast_log_contents
 
-    - name: Display fast.log content if it exists
+    - name: Cat and format the Suricata fast.log file if it exists
+      shell: cat /var/log/suricata/fast.log | jq .
+      when: fast_log_stat.stat.exists
+      register: formatted_fast_log_contents
+
+    - name: Display formatted fast.log content if it exists
       debug:
-        msg: "{{ fast_log_contents.stdout }}"
+        msg: "{{ formatted_fast_log_contents.stdout }}"
       when: fast_log_stat.stat.exists
 
     - name: Error message if fast.log does not exist
       debug:
         msg: "Error: fast.log file not found."
       when: not fast_log_stat.stat.exists
-
