@@ -21,13 +21,11 @@
 
 
     - name: Replace all interface entries in Suricata config
-      lineinfile:
+      replace:
         path: /etc/suricata/suricata.yaml
-        regexp: '^\s*- interface: eth0'  # Match any line starting with "- interface:"
-        line: "  - interface: {{ interface }}"  # Replace with the new interface
-        owner: root
-        group: root
-        mode: '0644'
+        regexp: '^\s*- interface:.*'  # Match any line starting with "- interface:"
+        replace: "  - interface: {{ interface }}"  # Replace with the new interface
+      become: true  # Run the task as root
       notify: Restart Suricata
 
 
