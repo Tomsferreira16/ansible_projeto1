@@ -345,14 +345,28 @@ class SuricataAnsibleGUI:
             if "Error: fast.log file not found." in playbook_output:
                 messagebox.showerror("Error", "Suricata fast.log file not found.")
             else:
-                # Display the content of fast.log in the text widget
+                # Extract only the content of the fast.log file from the output
+                log_content = self.extract_log_content(playbook_output)
+
+                # Display the content of the fast.log in the text widget
                 self.log_text.delete(1.0, tk.END)  # Clear the text box
-                self.log_text.insert(tk.END, playbook_output)  # Insert the playbook output
+                self.log_text.insert(tk.END, log_content)  # Insert the extracted log content
 
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"Ansible playbook execution failed: {e}")
         except Exception as e:
             messagebox.showerror("Error", f"Failed to view Suricata logs: {e}")
+
+    def extract_log_content(self, playbook_output):
+        # Assuming the log content starts after the "msg": part, find the logs
+        start_index = playbook_output.find('msg":')  # Find where the actual logs start
+
+        if start_index != -1:
+            # Extract the content after "msg": and clean it up
+            log_content = playbook_output[start_index + 6:].strip()  # Skip over 'msg":'
+            return log_content
+        else:
+            return "No log content found."  # If no logs are found in the output
 
 
 
