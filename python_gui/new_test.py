@@ -165,8 +165,11 @@ class SuricataAnsibleGUI:
         ips = ips.split(",")  # Split the IPs by comma
 
         try:
+            # Get the expanded home directory path
+            ssh_dir = os.path.expanduser("~/.ssh/")
+
             # Check if the SSH key already exists
-            key_exists = os.path.isfile(f"~/.ssh/{key_name}")  # Check if private key exists
+            key_exists = os.path.isfile(f"{ssh_dir}{key_name}")  # Check if private key exists
 
             if key_exists:
                 # If the key exists, use it directly
@@ -174,18 +177,18 @@ class SuricataAnsibleGUI:
             else:
                 # If the key does not exist, generate a new one
                 subprocess.run([
-                    "ssh-keygen", "-t", "ed25519", "-f", f"~/.ssh/{key_name}", "-C", comment, "-N", ""
+                    "ssh-keygen", "-t", "ed25519", "-f", f"{ssh_dir}{key_name}", "-C", comment, "-N", ""
                 ], check=True)
                 messagebox.showinfo("Info", f"Created new SSH key: {key_name}")
 
             # Step 2: Copy the public key to the remote servers
             for ip in ips:
                 ip = ip.strip()  # Clean up the IP
-                subprocess.run(["ssh-copy-id", "-i", f"~/.ssh/{key_name}.pub", ip], check=True)
+                subprocess.run(["ssh-copy-id", "-i", f"{ssh_dir}{key_name}.pub", ip], check=True)
 
             # Step 3: Add the private key to the SSH agent
             subprocess.run(["eval", "$(ssh-agent -s)"], check=True, shell=True)  # Start the SSH agent
-            subprocess.run(["ssh-add", f"~/.ssh/{key_name}"], check=True)  # Add the private key to the agent
+            subprocess.run(["ssh-add", f"{ssh_dir}{key_name}"], check=True)  # Add the private key to the agent
 
             # Step 4: Create an alias for the ssh-agent setup and add it to .bashrc for persistence
             alias_command = "alias ssha='eval $(ssh-agent) && ssh-add'"
