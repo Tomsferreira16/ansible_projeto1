@@ -346,7 +346,7 @@ class SuricataAnsibleGUI:
         # Run Ansible playbook to add the rule
         try:
             subprocess.run([
-                "ansible-playbook", "-i", self.inventory_file, "/path/to/your/add_custom_rule.yml", 
+                "ansible-playbook", "-i", self.inventory_file, "/etc/suricata/rules/custom.rules", 
                 "--extra-vars", f"action={action} protocol={protocol} src_ip={src_ip} src_port={src_port} "
                                 f"dst_ip={dst_ip} dst_port={dst_port} msg={msg} sid={sid} custom_rule='{rule}'"
             ], check=True)
