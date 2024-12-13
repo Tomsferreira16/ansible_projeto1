@@ -1,4 +1,3 @@
----
 - name: Add custom Suricata rule
   hosts: all
   become: yes
@@ -16,6 +15,3 @@
         create: yes
         insertafter: EOF
         mode: '0644'
-      vars:
-        custom_rule: "{{ action }} {{ protocol }} {{ src_ip }} {{ src_port }} -> {{ dst_ip }} {{ dst_port }} (msg:\"{{ msg }}\"; sid:{{ sid }};)"
-

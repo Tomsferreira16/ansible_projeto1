@@ -4,6 +4,8 @@ from tkinter import ttk, messagebox
 import subprocess
 import os
 import json
+import base64
+
 
 
 class SuricataAnsibleGUI:
@@ -338,33 +340,43 @@ class SuricataAnsibleGUI:
             messagebox.showerror("Error", "All fields must be filled out.")
             return
 
-        rule = f"{action} {protocol} {src_ip} {src_port} -> {dst_ip} {dst_port} (msg:\"{msg}\"; sid:{sid};)\n"
-        
-        try:
-            # Try to append the custom rule to the Suricata rules file
-            with open("/etc/suricata/rules/custom.rules", "a") as file:
-                file.write(rule)
-            
-            # Display the updated rules in the text widget
-            self.view_custom_rules()
+        # Format the rule as a string
+        rule = f"{action} {protocol} {src_ip} {src_port} -> {dst_ip} {dst_port} (msg:\"{msg}\"; sid:{sid};)"
 
+        # Run Ansible playbook to add the rule
+        try:
+            subprocess.run([
+                "ansible-playbook", "-i", self.inventory_file, "/path/to/your/add_custom_rule.yml", 
+                "--extra-vars", f"action={action} protocol={protocol} src_ip={src_ip} src_port={src_port} "
+                                f"dst_ip={dst_ip} dst_port={dst_port} msg={msg} sid={sid} custom_rule='{rule}'"
+            ], check=True)
+
+            # Display success message
             messagebox.showinfo("Success", "Custom rule added.")
-        except PermissionError:
-            messagebox.showerror("Permission Error", "You do not have permission to modify the rules file. Please run the program as an administrator.")
-        except IOError as e:
-            messagebox.showerror("Error", f"An error occurred while adding the rule: {e}")
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"An error occurred: {e}")
+
 
     def view_custom_rules(self):
-            try:
-                # Read the custom rules and display them
-                with open("/etc/suricata/rules/custom.rules", "r") as file:
-                    custom_rules = file.read()
+        try:
+            # Run Ansible playbook to fetch custom rules
+            result = subprocess.run([
+                "ansible-playbook", "-i", self.inventory_file, "/path/to/your/view_custom_rules.yml"
+            ], capture_output=True, text=True, check=True)
 
-                self.custom_rules_text.delete(1.0, tk.END)  # Clear the current content
-                self.custom_rules_text.insert(tk.END, custom_rules)  # Insert the new content
-            except IOError as e:
-                messagebox.showerror("Error", f"An error occurred while reading the custom rules: {e}")
-           
+            # Process the output
+            if "custom_rules.content" in result.stdout:
+                custom_rules = result.stdout.split("custom_rules.content:")[-1].strip()
+                custom_rules_decoded = json.loads(custom_rules)['content']
+                decoded_rules = base64.b64decode(custom_rules_decoded).decode('utf-8')
+                self.custom_rules_text.delete(1.0, tk.END)
+                self.custom_rules_text.insert(tk.END, decoded_rules)
+            else:
+                messagebox.showerror("Error", "Failed to retrieve custom rules.")
+        
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"An error occurred: {e}")
+
 
 
 
