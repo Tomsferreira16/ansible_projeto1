@@ -361,7 +361,7 @@ class SuricataAnsibleGUI:
         try:
             # Run Ansible playbook to fetch custom rules
             result = subprocess.run([
-                "ansible-playbook", "-i", self.inventory_file, "/path/to/your/view_custom_rules.yml"
+                "ansible-playbook", "-i", self.inventory_file, "view_custom_rules.yml"
             ], capture_output=True, text=True, check=True)
 
             # Process the output
