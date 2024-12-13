@@ -401,13 +401,13 @@ class SuricataAnsibleGUI:
             # Extract the rules from Ansible output
             for line in result.stdout.splitlines():
                 if "custom_rules.stdout" in line:
-                    # Extract and display rules
+                    # Extract and clean up the rules content from stdout
                     rules = line.split("=>")[-1].strip().strip('"')
 
-                    # Insert the rules into the Text widget with proper formatting
-                    # Each rule is already separated by newlines in the stdout
-                    self.custom_rules_text.delete(1.0, tk.END)
-                    self.custom_rules_text.insert(tk.END, rules)
+                    # Insert the rules into the Text widget, each rule on a new line
+                    self.custom_rules_text.delete(1.0, tk.END)  # Clear any previous content
+                    # Insert rules with proper line breaks, handling \n between rules
+                    self.custom_rules_text.insert(tk.END, rules.replace("\n", "\n"))  # Explicitly format with newlines
 
                     return
 
