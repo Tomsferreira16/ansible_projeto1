@@ -364,9 +364,7 @@ class SuricataAnsibleGUI:
                 self.custom_rules_text.insert(tk.END, custom_rules)  # Insert the new content
             except IOError as e:
                 messagebox.showerror("Error", f"An error occurred while reading the custom rules: {e}")
-            if not os.geteuid() == 0:
-                messagebox.showerror("Permission Error", "You need to run the script as an administrator.")
-            return
+           
 
 
 
