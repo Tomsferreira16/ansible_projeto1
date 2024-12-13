@@ -9,12 +9,13 @@
         state: directory
         mode: '0755'
 
-    - name: Force append the custom rule to the file
+    - name: Add the custom rule to the file
       lineinfile:
         path: "/etc/suricata/rules/custom.rules"
         line: "{{ custom_rule }}"
         create: yes
-        insertafter: EOF  
+        insertafter: EOF
         mode: '0644'
       vars:
-        custom_rule: "{{ custom_rule }}"
+        custom_rule: "{{ action }} {{ protocol }} {{ src_ip }} {{ src_port }} -> {{ dst_ip }} {{ dst_port }} (msg:\"{{ msg }}\"; sid:{{ sid }};)"
+
