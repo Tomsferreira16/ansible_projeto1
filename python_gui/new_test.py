@@ -4,6 +4,7 @@ from tkinter import ttk, messagebox
 import subprocess
 import os
 import json
+import re
 
 
 
@@ -357,6 +358,8 @@ class SuricataAnsibleGUI:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to view Suricata logs: {e}")
 
+    import re
+
     def extract_log_content(self, playbook_output):
         # Extract log content: We assume the log entries begin after the "msg" field
         # and end at the last log entry (matching the log format).
@@ -372,10 +375,18 @@ class SuricataAnsibleGUI:
             if log_content.startswith('"') and log_content.endswith('"'):
                 log_content = log_content[1:-1]  # Remove the first and last quote marks
             
-            # Replace \\n with actual newline character and clean any extra spaces
+            # Replace \\n with actual newline character
             log_content = log_content.replace("\\n", "\n").strip()
-            
-            return log_content
+
+            # Now filter the log content to only include lines starting with a date (e.g., xx/xx/xxxx)
+            filtered_log = ""
+            for line in log_content.splitlines():
+                # Match lines starting with a date in the format MM/DD/YYYY (e.g., 12/13/2024)
+                if re.match(r"^\d{2}/\d{2}/\d{4}", line):  # Matches date format at the start of the line
+                    filtered_log += line + "\n"  # Add matching line to filtered content
+
+            return filtered_log if filtered_log else "No logs found with valid date format."
+
         else:
             return "No log content found."  # In case no log content is found
 
