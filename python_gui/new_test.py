@@ -341,7 +341,7 @@ class SuricataAnsibleGUI:
         rule = f"{action} {protocol} {src_ip} {src_port} -> {dst_ip} {dst_port} (msg:\"{msg}\"; sid:{sid};)\n"
         
         try:
-            # Append the custom rule to the Suricata rules file
+            # Try to append the custom rule to the Suricata rules file
             with open("/etc/suricata/rules/custom.rules", "a") as file:
                 file.write(rule)
             
@@ -349,20 +349,22 @@ class SuricataAnsibleGUI:
             self.view_custom_rules()
 
             messagebox.showinfo("Success", "Custom rule added.")
+        except PermissionError:
+            messagebox.showerror("Permission Error", "You do not have permission to modify the rules file. Please run the program as an administrator.")
         except IOError as e:
             messagebox.showerror("Error", f"An error occurred while adding the rule: {e}")
 
-
     def view_custom_rules(self):
-        try:
-            # Read the custom rules and display them
-            with open("/etc/suricata/rules/custom.rules", "r") as file:
-                custom_rules = file.read()
+            try:
+                # Read the custom rules and display them
+                with open("/etc/suricata/rules/custom.rules", "r") as file:
+                    custom_rules = file.read()
 
-            self.custom_rules_text.delete(1.0, tk.END)  # Clear the current content
-            self.custom_rules_text.insert(tk.END, custom_rules)  # Insert the new content
-        except IOError as e:
-            messagebox.showerror("Error", f"An error occurred while reading the custom rules: {e}")
+                self.custom_rules_text.delete(1.0, tk.END)  # Clear the current content
+                self.custom_rules_text.insert(tk.END, custom_rules)  # Insert the new content
+            except IOError as e:
+                messagebox.showerror("Error", f"An error occurred while reading the custom rules: {e}")
+
 
 
 # ---------------------- Main Program ----------------------

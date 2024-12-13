@@ -10,4 +10,4 @@
 
     - name: Decode and return custom rules content
       debug:
-        msg: "{{ custom_rules.content | b64decode }}"
+        msg: "{{ custom_rules.content | b64decode | regex_replace('\n', '') }}"
