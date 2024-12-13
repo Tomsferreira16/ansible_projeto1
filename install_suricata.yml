@@ -18,13 +18,12 @@
     - name: Install Suricata rules
       command: suricata-update
 
-
-    
-    - name: Replace line in suricata.yaml
+  
+    - name: Replace all occurrences of - interface eth0 in the file
       lineinfile:
         path: /etc/suricata/suricata.yaml
-        regexp: '^\s*- interface:'
-        line: '          - interface: eth0'
+        regexp: '^\t*- interface:\s*eth0'
+        line: '\t- interface: eth0'
         state: present
 
 
