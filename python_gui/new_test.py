@@ -397,7 +397,10 @@ class SuricataAnsibleGUI:
                 text=True,
                 check=True
             )
+
+            # Print the output from the playbook to check the format
             print(result.stdout)  # Add this line to see the output in the console
+
             # Extract the rules from Ansible output
             for line in result.stdout.splitlines():
                 if "custom_rules.stdout" in line:
@@ -416,11 +419,7 @@ class SuricataAnsibleGUI:
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
 
-        
-
-
-
-
+            
 
 # ---------------------- Main Program ----------------------
 if __name__ == "__main__":
