@@ -12,6 +12,7 @@ class SuricataAnsibleGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Suricata & Ansible Management")
+        self.root.geometry("800x600")  # Set window size
 
         # Path to the inventory file
         self.inventory_file = "/home/tomas/ansible_projeto1/inventory"
@@ -21,130 +22,163 @@ class SuricataAnsibleGUI:
         self.notebook.pack(fill=tk.BOTH, expand=True)
 
         # ---------------------- Setup Tab ----------------------
-        self.setup_frame = ttk.Frame(self.notebook, padding="10")
+        self.setup_frame = ttk.Frame(self.notebook, padding="15")
         self.notebook.add(self.setup_frame, text="Setup")
 
+        # SSH Key Name Entry
         self.key_name_label = tk.Label(self.setup_frame, text="SSH Key Name:")
-        self.key_name_label.grid(row=0, column=0)
+        self.key_name_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
         self.key_name_entry = tk.Entry(self.setup_frame)
-        self.key_name_entry.grid(row=0, column=1)
+        self.key_name_entry.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
 
+        # SSH Key Comment Entry
         self.comment_label = tk.Label(self.setup_frame, text="SSH Key Comment:")
-        self.comment_label.grid(row=1, column=0)
+        self.comment_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
         self.comment_entry = tk.Entry(self.setup_frame)
-        self.comment_entry.grid(row=1, column=1)
+        self.comment_entry.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
 
+        # Server IPs Entry
         self.setup_ip_label = tk.Label(self.setup_frame, text="Server IPs (comma separated):")
-        self.setup_ip_label.grid(row=2, column=0)
+        self.setup_ip_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
         self.setup_ip_entry = tk.Entry(self.setup_frame)
-        self.setup_ip_entry.grid(row=2, column=1)
+        self.setup_ip_entry.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
 
+        # Create & Copy SSH Key Button
         self.create_key_button = tk.Button(self.setup_frame, text="Create & Copy SSH Key", command=self.create_and_copy_key)
-        self.create_key_button.grid(row=3, columnspan=2)
+        self.create_key_button.grid(row=3, columnspan=2, pady=15)
 
         # ---------------------- Inventory Tab ----------------------
-        self.inventory_frame = ttk.Frame(self.notebook, padding="10")
+        self.inventory_frame = ttk.Frame(self.notebook, padding="15")
         self.notebook.add(self.inventory_frame, text="Inventory")
 
+        # IP Address Entry
         self.inventory_ip_label = tk.Label(self.inventory_frame, text="IP Address:")
-        self.inventory_ip_label.grid(row=0, column=0)
+        self.inventory_ip_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
         self.inventory_ip_entry = tk.Entry(self.inventory_frame)
-        self.inventory_ip_entry.grid(row=0, column=1)
+        self.inventory_ip_entry.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
 
+        # Username Entry
         self.user_label = tk.Label(self.inventory_frame, text="Username:")
-        self.user_label.grid(row=1, column=0)
+        self.user_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
         self.user_entry = tk.Entry(self.inventory_frame)
-        self.user_entry.grid(row=1, column=1)
+        self.user_entry.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
 
+        # Password Entry
         self.password_label = tk.Label(self.inventory_frame, text="Password:")
-        self.password_label.grid(row=2, column=0)
+        self.password_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
         self.password_entry = tk.Entry(self.inventory_frame, show="*")
-        self.password_entry.grid(row=2, column=1)
+        self.password_entry.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
 
         # Buttons for Inventory Management
         self.save_inventory_button = tk.Button(self.inventory_frame, text="New Server", command=self.save_server)
-        self.save_inventory_button.grid(row=3, column=0)
+        self.save_inventory_button.grid(row=3, column=0, pady=10)
 
         self.load_inventory_button = tk.Button(self.inventory_frame, text="Load Inventory", command=self.load_inventory)
-        self.load_inventory_button.grid(row=4, columnspan=2)
+        self.load_inventory_button.grid(row=4, columnspan=2, pady=5)
 
         self.inventory_text = tk.Text(self.inventory_frame, height=10, width=50)
-        self.inventory_text.grid(row=5, columnspan=2)
+        self.inventory_text.grid(row=5, columnspan=2, padx=10, pady=10)
 
         self.delete_button = tk.Button(self.inventory_frame, text="Delete Server", command=self.delete_server)
-        self.delete_button.grid(row=6, columnspan=2)
+        self.delete_button.grid(row=6, columnspan=2, pady=10)
 
         # ---------------------- Install Suricata Tab ----------------------
-        self.install_frame = ttk.Frame(self.notebook, padding="10")
+        self.install_frame = ttk.Frame(self.notebook, padding="15")
         self.notebook.add(self.install_frame, text="Install Suricata")
 
+        # Install Suricata Button
         self.run_playbook_button = tk.Button(self.install_frame, text="Install Suricata", command=self.install_suricata)
-        self.run_playbook_button.grid(row=1, columnspan=2)
+        self.run_playbook_button.grid(row=0, column=0, columnspan=2, pady=5, sticky="")
+
+        # Interface Input Field
+        self.interface_label = tk.Label(self.install_frame, text="Interface:")
+        self.interface_label.grid(row=1, column=0, padx=5, pady=5, sticky="")
+        self.interface_entry = tk.Entry(self.install_frame)
+        self.interface_entry.grid(row=1, column=1, padx=5, pady=5, sticky="")
+
+        # Change Interface Button
+        self.change_interface_button = tk.Button(self.install_frame, text="Change Interface", command=self.change_interface)
+        self.change_interface_button.grid(row=2, column=0, columnspan=2, pady=5, sticky="")
+
+        # Configure grid weights to ensure elements expand properly
+        self.install_frame.grid_columnconfigure(0, weight=1)
+        self.install_frame.grid_columnconfigure(1, weight=2)
 
         # ---------------------- Suricata Logs Tab ----------------------
-        self.logs_frame = ttk.Frame(self.notebook, padding="10")
+        self.logs_frame = ttk.Frame(self.notebook, padding="15")
         self.notebook.add(self.logs_frame, text="Suricata Logs")
 
+        # View Logs Button
         self.view_logs_button = tk.Button(self.logs_frame, text="View Logs", command=self.view_logs)
-        self.view_logs_button.grid(row=0, columnspan=2)
+        self.view_logs_button.grid(row=0, columnspan=2, pady=15)
 
         self.log_text = tk.Text(self.logs_frame, height=10, width=50)
-        self.log_text.grid(row=1, columnspan=2)
+        self.log_text.grid(row=1, columnspan=2, padx=10, pady=10)
 
         # ---------------------- Custom Rules Tab ----------------------
-        self.rules_frame = ttk.Frame(self.notebook, padding="10")
+        self.rules_frame = ttk.Frame(self.notebook, padding="15")
         self.notebook.add(self.rules_frame, text="Custom Rules")
 
+        # Action Entry Dropdown
         self.action_label = tk.Label(self.rules_frame, text="Action:")
-        self.action_label.grid(row=0, column=0)
+        self.action_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
         self.action_var = tk.StringVar()
         self.action_dropdown = tk.OptionMenu(self.rules_frame, self.action_var, "alert", "pass", "drop", "reject", "log")
-        self.action_dropdown.grid(row=0, column=1)
+        self.action_dropdown.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
 
+        # Protocol Entry
         self.protocol_label = tk.Label(self.rules_frame, text="Protocol:")
-        self.protocol_label.grid(row=1, column=0)
+        self.protocol_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
         self.protocol_entry = tk.Entry(self.rules_frame)
-        self.protocol_entry.grid(row=1, column=1)
+        self.protocol_entry.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
 
+        # Source IP Entry
         self.src_ip_label = tk.Label(self.rules_frame, text="Source IP:")
-        self.src_ip_label.grid(row=2, column=0)
+        self.src_ip_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
         self.src_ip_entry = tk.Entry(self.rules_frame)
-        self.src_ip_entry.grid(row=2, column=1)
+        self.src_ip_entry.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
 
+        # Source Port Entry
         self.src_port_label = tk.Label(self.rules_frame, text="Source Port:")
-        self.src_port_label.grid(row=3, column=0)
+        self.src_port_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
         self.src_port_entry = tk.Entry(self.rules_frame)
-        self.src_port_entry.grid(row=3, column=1)
+        self.src_port_entry.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
 
+        # Destination IP Entry
         self.dst_ip_label = tk.Label(self.rules_frame, text="Destination IP:")
-        self.dst_ip_label.grid(row=4, column=0)
+        self.dst_ip_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
         self.dst_ip_entry = tk.Entry(self.rules_frame)
-        self.dst_ip_entry.grid(row=4, column=1)
+        self.dst_ip_entry.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
 
+        # Destination Port Entry
         self.dst_port_label = tk.Label(self.rules_frame, text="Destination Port:")
-        self.dst_port_label.grid(row=5, column=0)
+        self.dst_port_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
         self.dst_port_entry = tk.Entry(self.rules_frame)
-        self.dst_port_entry.grid(row=5, column=1)
+        self.dst_port_entry.grid(row=5, column=1, padx=10, pady=5, sticky="ew")
 
+        # Message Entry
         self.msg_label = tk.Label(self.rules_frame, text="Message:")
-        self.msg_label.grid(row=6, column=0)
+        self.msg_label.grid(row=6, column=0, padx=10, pady=5, sticky="w")
         self.msg_entry = tk.Entry(self.rules_frame)
-        self.msg_entry.grid(row=6, column=1)
+        self.msg_entry.grid(row=6, column=1, padx=10, pady=5, sticky="ew")
 
+        # SID Entry
         self.sid_label = tk.Label(self.rules_frame, text="SID:")
-        self.sid_label.grid(row=7, column=0)
+        self.sid_label.grid(row=7, column=0, padx=10, pady=5, sticky="w")
         self.sid_entry = tk.Entry(self.rules_frame)
-        self.sid_entry.grid(row=7, column=1)
+        self.sid_entry.grid(row=7, column=1, padx=10, pady=5, sticky="ew")
 
+        # Add Rule Button
         self.add_rule_button = tk.Button(self.rules_frame, text="Add Rule", command=self.add_rule)
-        self.add_rule_button.grid(row=8, columnspan=2)
+        self.add_rule_button.grid(row=8, columnspan=2, pady=15)
 
+        # View Custom Rules Button
         self.view_custom_rules_button = tk.Button(self.rules_frame, text="View Custom Rules", command=self.view_custom_rules)
-        self.view_custom_rules_button.grid(row=9, columnspan=2)
+        self.view_custom_rules_button.grid(row=9, columnspan=2, pady=10)
 
+        # Custom Rules Text Box
         self.custom_rules_text = tk.Text(self.rules_frame, height=10, width=50)
-        self.custom_rules_text.grid(row=10, columnspan=2)
-
+        self.custom_rules_text.grid(row=10, columnspan=2, padx=10, pady=10)
 
     # ---------------------- Setup SSH Key Tab ----------------------
     def create_and_copy_key(self):
@@ -279,6 +313,16 @@ class SuricataAnsibleGUI:
         except subprocess.CalledProcessError as e:
             # Handle error
             messagebox.showerror("Error", f"An error occurred while running the playbook: {e}")
+    #---------------------------Change Interface -----------------------------------
+    def change_interface(self):
+        # Get the interface from the entry field
+        interface = self.interface_entry.get()
+
+        if interface:
+            # Run the change_interface.yml playbook with the selected interface as a variable
+            subprocess.run(["ansible-playbook", "~/playbook_ansible/change_interface.yml", "-e", f"interface={interface}"])
+        else:
+            print("Please enter a valid interface.")
 
 
     # ---------------------- Suricata Logs ----------------------
