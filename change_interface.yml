@@ -1,0 +1,20 @@
+---
+- name: Install and configure Suricata
+  hosts: all
+  become: true
+  vars:
+    interface: "{{ lookup('env', 'interface') }}"  # Lookup the interface from environment variable
+
+  tasks:
+    - name: Replace all occurrences of interface eth0 in the file
+      lineinfile:
+        path: /etc/suricata/suricata.yaml
+        regexp: 'interface:\s*eth0'  # Match the interface eth0 line
+        line: 'interface: {{ interface }}'  # Replace with the provided interface variable
+      notify: Restart Suricata
+
+  handlers:
+    - name: Restart Suricata
+      service:
+        name: suricata
+        state: restarted

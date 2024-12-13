@@ -4,7 +4,7 @@ from tkinter import ttk, messagebox
 import subprocess
 import os
 import json
-import base64
+
 
 
 
@@ -77,11 +77,6 @@ class SuricataAnsibleGUI:
         # ---------------------- Install Suricata Tab ----------------------
         self.install_frame = ttk.Frame(self.notebook, padding="10")
         self.notebook.add(self.install_frame, text="Install Suricata")
-
-        self.interface_label = tk.Label(self.install_frame, text="Network Interface:")
-        self.interface_label.grid(row=0, column=0)
-        self.interface_entry = tk.Entry(self.install_frame)
-        self.interface_entry.grid(row=0, column=1)
 
         self.run_playbook_button = tk.Button(self.install_frame, text="Install Suricata", command=self.install_suricata)
         self.run_playbook_button.grid(row=1, columnspan=2)
@@ -270,20 +265,19 @@ class SuricataAnsibleGUI:
 
     # ---------------------- Install Suricata ----------------------
     def install_suricata(self):
-        interface = self.interface_entry.get()
-
-        if not interface:
-            messagebox.showerror("Error", "Please provide a network interface.")
-            return
-
+        
+        # Executes the Ansible playbook to install and configure Suricata 
+        
         try:
             # Run the Ansible playbook to install Suricata
             subprocess.run([
-                "ansible-playbook", "-i", self.inventory_file, "install_suricata.yml", "--extra-vars", f"interface={interface}"
+                "ansible-playbook", "-i", self.inventory_file, "install_suricata.yml"
             ], check=True)
 
+            # Show success message
             messagebox.showinfo("Success", "Suricata installation initiated.")
         except subprocess.CalledProcessError as e:
+            # Handle error
             messagebox.showerror("Error", f"An error occurred while running the playbook: {e}")
 
 

@@ -2,9 +2,7 @@
 - name: Install and configure Suricata
   hosts: all
   become: true
-  vars:
-    interface: "{{ lookup('env', 'interface') }}"  # Lookup the interface from environment variable
-
+  
   tasks:
     - name: Update apt package index
       apt:
@@ -19,15 +17,6 @@
 
     - name: Install Suricata rules
       command: suricata-update
-
-    #- name: Replace all occurrences of interface eth0 in the file
-    #  lineinfile:
-    #    path: /etc/suricata/suricata.yaml
-    #    regexp: 'interface:\s*eth0'  # Match the interface eth0 line
-    #    replace: 'interface: {{ interface }}'  # Replace with the provided interface variable~
-    #    insertafter: 'af-packet:'
-    #  notify: Restart Suricata
-
 
     - name: Replace default rule path in Suricata config
       lineinfile:
