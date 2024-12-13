@@ -404,10 +404,9 @@ class SuricataAnsibleGUI:
                     # Extract and clean up the rules content from stdout
                     rules = line.split("=>")[-1].strip().strip('"')
 
-                    # Insert the rules into the Text widget, each rule on a new line
+                    # Insert rules into the Text widget, directly preserving line breaks
                     self.custom_rules_text.delete(1.0, tk.END)  # Clear any previous content
-                    # Insert rules with proper line breaks, handling \n between rules
-                    self.custom_rules_text.insert(tk.END, rules.replace("\n", "\n"))  # Explicitly format with newlines
+                    self.custom_rules_text.insert(tk.END, rules)  # Insert with proper line breaks
 
                     return
 
@@ -416,6 +415,9 @@ class SuricataAnsibleGUI:
 
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
+        print(result.stdout)  # This will help you see how the output looks
+
+
 
 
 
