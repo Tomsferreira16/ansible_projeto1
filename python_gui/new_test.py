@@ -32,10 +32,10 @@ class SuricataAnsibleGUI:
         self.comment_entry = tk.Entry(self.setup_frame)
         self.comment_entry.grid(row=1, column=1)
 
-        self.ip_label = tk.Label(self.setup_frame, text="Server IPs (comma separated):")
-        self.ip_label.grid(row=2, column=0)
-        self.ip_entry = tk.Entry(self.setup_frame)
-        self.ip_entry.grid(row=2, column=1)
+        self.setup_ip_label = tk.Label(self.setup_frame, text="Server IPs (comma separated):")
+        self.setup_ip_label.grid(row=2, column=0)
+        self.setup_ip_entry = tk.Entry(self.setup_frame)
+        self.setup_ip_entry.grid(row=2, column=1)
 
         self.create_key_button = tk.Button(self.setup_frame, text="Create & Copy SSH Key", command=self.create_and_copy_key)
         self.create_key_button.grid(row=3, columnspan=2)
@@ -44,10 +44,10 @@ class SuricataAnsibleGUI:
         self.inventory_frame = ttk.Frame(self.notebook, padding="10")
         self.notebook.add(self.inventory_frame, text="Inventory")
 
-        self.ip_label = tk.Label(self.inventory_frame, text="IP Address:")
-        self.ip_label.grid(row=0, column=0)
-        self.ip_entry = tk.Entry(self.inventory_frame)
-        self.ip_entry.grid(row=0, column=1)
+        self.inventory_ip_label = tk.Label(self.inventory_frame, text="IP Address:")
+        self.inventory_ip_label.grid(row=0, column=0)
+        self.inventory_ip_entry = tk.Entry(self.inventory_frame)
+        self.inventory_ip_entry.grid(row=0, column=1)
 
         self.user_label = tk.Label(self.inventory_frame, text="Username:")
         self.user_label.grid(row=1, column=0)
@@ -153,7 +153,7 @@ class SuricataAnsibleGUI:
     def create_and_copy_key(self):
         key_name = self.key_name_entry.get()
         comment = self.comment_entry.get()
-        ips = self.ip_entry.get()
+        ips = self.setup_ip_entry.get()
 
         # Debugging print to check the raw inputs
         print(f"Key Name: '{key_name}', Comment: '{comment}', IPs: '{ips}'")
@@ -206,7 +206,7 @@ class SuricataAnsibleGUI:
     # ---------------------- Inventory Functions ----------------------
     def save_server(self):
         # Get the input values
-        ip = self.ip_entry.get()
+        ip = self.inventory_ip_entry.get()
         user = self.user_entry.get()
         password = self.password_entry.get()
 
@@ -244,7 +244,7 @@ class SuricataAnsibleGUI:
     def delete_server(self):
         try:
             # Get the IP address to delete
-            ip = self.ip_entry.get()
+            ip = self.inventory_ip_entry.get()
 
             if not ip:
                 messagebox.showerror("Error", "Please enter an IP address to delete.")
