@@ -403,10 +403,10 @@ class SuricataAnsibleGUI:
 
             # Extract the rules from Ansible output
             for line in result.stdout.splitlines():
-                if "custom_rules.stdout:" in line:
+                if "custom_rules.stdout" in line:
                     # Extract and clean up the rules content from stdout
                     # Find the part after the "custom_rules.stdout": 
-                    rules = line.split("custom_rules.stdout")[1].strip().strip('"')
+                    rules = line.split("custom_rules.stdout:")[1].strip().strip('"')
 
                     # Insert rules into the Text widget, preserving line breaks
                     self.custom_rules_text.delete(1.0, tk.END)  # Clear any previous content
