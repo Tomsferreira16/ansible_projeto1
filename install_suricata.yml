@@ -18,20 +18,12 @@
     - name: Install Suricata rules
       command: suricata-update
 
-    - name: Replace interface in af-packet section of Suricata config
-      lineinfile:
-        path: /etc/suricata/suricata.yaml
-        regexp: '^\s*- interface:.*'
-        line: "  - interface: {{ interface }}"
-        owner: root
-        group: root
-        mode: 0644
-      notify: Restart Suricata
+
 
     - name: Replace interface in af-packet section of Suricata config
       lineinfile:
         path: /etc/suricata/suricata.yaml
-        regexp: '^\s*- interface:.*'
+        regexp: '^\s* - interface:.*'
         line: "  - interface: {{ interface }}"
         owner: root
         group: root
