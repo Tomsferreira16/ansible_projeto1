@@ -397,7 +397,7 @@ class SuricataAnsibleGUI:
                 text=True,
                 check=True
             )
-
+            print(result.stdout)  # Add this line to see the output in the console
             # Extract the rules from Ansible output
             for line in result.stdout.splitlines():
                 if "custom_rules.stdout" in line:
@@ -415,7 +415,8 @@ class SuricataAnsibleGUI:
 
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
-        print(result.stdout)  # This will help you see how the output looks
+
+        
 
 
 
