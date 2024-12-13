@@ -23,12 +23,9 @@
     - name: Replace line in suricata.yaml
       lineinfile:
         path: /etc/suricata/suricata.yaml
-        regexp: '^# Linux high speed capture support'
-        line: |
-          af-packet:
-            - interface: enp0s3 
+        regexp: '^\s*- interface:'
+        line: '          - interface: eth0'
         state: present
-
 
 
     - name: Replace default rule path in Suricata config
