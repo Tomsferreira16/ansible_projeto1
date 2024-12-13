@@ -28,6 +28,17 @@
         mode: 0644
       notify: Restart Suricata
 
+    - name: Replace interface in af-packet section of Suricata config
+      lineinfile:
+        path: /etc/suricata/suricata.yaml
+        regexp: '^\s*- interface:.*'
+        line: "  - interface: {{ interface }}"
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Restart Suricata
+
+
 
     - name: Replace default rule path in Suricata config
       lineinfile:
