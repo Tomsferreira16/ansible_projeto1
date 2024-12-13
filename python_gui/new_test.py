@@ -407,9 +407,11 @@ class SuricataAnsibleGUI:
                     # Extract and clean up the rules content from stdout
                     rules = line.split("=>")[-1].strip().strip('"')
 
-                    # Insert rules into the Text widget, directly preserving line breaks
+                    # Insert rules into the Text widget, preserving line breaks
                     self.custom_rules_text.delete(1.0, tk.END)  # Clear any previous content
-                    self.custom_rules_text.insert(tk.END, rules)  # Insert with proper line breaks
+
+                    # Here we are inserting the cleaned-up rules with line breaks properly displayed
+                    self.custom_rules_text.insert(tk.END, rules.replace("\\n", "\n"))  # Replace literal \n with actual newline
 
                     return
 
