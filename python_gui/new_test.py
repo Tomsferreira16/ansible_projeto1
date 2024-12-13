@@ -357,22 +357,22 @@ class SuricataAnsibleGUI:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to view Suricata logs: {e}")
 
-def extract_log_content(self, playbook_output):
-    # Extract log content: We assume the log entries begin after the "msg" field
-    # and end at the last log entry (matching the log format).
-    start_index = playbook_output.find('msg":')
+    def extract_log_content(self, playbook_output):
+        # Extract log content: We assume the log entries begin after the "msg" field
+        # and end at the last log entry (matching the log format).
+        start_index = playbook_output.find('msg":')
 
-    if start_index != -1:
-        # Extract the content after "msg": (skip the leading "msg": part)
-        log_content = playbook_output[start_index + 6:].strip()  # Skip over 'msg":'
-        
-        # Clean up newlines, if needed
-        log_content = log_content.replace("\\n", "\n")
-        
-        # Return only the log content (strip extra white space or Ansible-specific lines)
-        return log_content
-    else:
-        return "No log content found."  # In case no log content is found
+        if start_index != -1:
+            # Extract the content after "msg": (skip the leading "msg": part)
+            log_content = playbook_output[start_index + 6:].strip()  # Skip over 'msg":'
+            
+            # Clean up newlines, if needed
+            log_content = log_content.replace("\\n", "\n")
+            
+            # Return only the log content (strip extra white space or Ansible-specific lines)
+            return log_content
+        else:
+            return "No log content found."  # In case no log content is found
 
 
 
