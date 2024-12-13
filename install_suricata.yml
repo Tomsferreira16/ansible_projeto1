@@ -20,11 +20,11 @@
 
 
 
-    - name: Add interface under af-packet section in Suricata config
+    - name: Replace all interface entries in Suricata config
       lineinfile:
         path: /etc/suricata/suricata.yaml
-        insertafter: '^af-packet:'  # Insert after the af-packet section header
-        line: "  - interface: {{ interface }}"  # The line to be added
+        regexp: '^\s*- interface: eth0'  # Match any line starting with "- interface:"
+        line: "  - interface: {{ interface }}"  # Replace with the new interface
         owner: root
         group: root
         mode: '0644'
