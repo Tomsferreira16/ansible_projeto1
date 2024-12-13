@@ -356,24 +356,28 @@ class SuricataAnsibleGUI:
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
 
-
     def view_custom_rules(self):
         try:
             # Run Ansible playbook to fetch custom rules
-            result = subprocess.run([
-                "ansible-playbook", "-i", self.inventory_file, "view_custom_rules.yml"
-            ], capture_output=True, text=True, check=True)
+            result = subprocess.run(
+                ["ansible-playbook", "-i", self.inventory_file, "view_custom_rules.yml"],
+                capture_output=True,
+                text=True,
+                check=True
+            )
 
-            # Process the output
-            if "custom_rules.content" in result.stdout:
-                custom_rules = result.stdout.split("custom_rules.content:")[-1].strip()
-                custom_rules_decoded = json.loads(custom_rules)['content']
-                decoded_rules = base64.b64decode(custom_rules_decoded).decode('utf-8')
-                self.custom_rules_text.delete(1.0, tk.END)
-                self.custom_rules_text.insert(tk.END, decoded_rules)
-            else:
-                messagebox.showerror("Error", "Failed to retrieve custom rules.")
-        
+            # Extract the rules from Ansible output
+            for line in result.stdout.splitlines():
+                if "custom_rules.stdout" in line:
+                    # Extract and display rules
+                    rules = line.split("=>")[-1].strip().strip('"')
+                    self.custom_rules_text.delete(1.0, tk.END)
+                    self.custom_rules_text.insert(tk.END, rules)
+                    return
+
+            # If content not found, show error
+            messagebox.showerror("Error", "Failed to retrieve custom rules.")
+
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
 

@@ -3,11 +3,10 @@
   hosts: all
   become: yes
   tasks:
-    - name: Read the custom rules file
-      slurp:
-        path: "/etc/suricata/rules/custom.rules"
+    - name: Display custom rules file
+      command: cat /etc/suricata/rules/custom.rules
       register: custom_rules
 
-    - name: Decode and return custom rules content
+    - name: Output custom rules content
       debug:
-        msg: "{{ custom_rules.content | b64decode | regex_replace('\n', '') }}"
+        var: custom_rules.stdout
