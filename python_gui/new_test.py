@@ -259,13 +259,13 @@ class SuricataAnsibleGUI:
             self.ls_textbox.delete("1.0", tk.END)
             self.ls_textbox.insert(tk.END, "Inventory file is not set.\n")
             return
-        
+
         playbook_command = ["ansible-playbook", "-i", self.inventory_file, "ls_ssh_keys.yml"]
-        
+
         try:
             # Execute the ansible-playbook command and capture the output
             result = subprocess.run(playbook_command, capture_output=True, text=True)
-            
+
             # Check if the playbook ran successfully
             if result.returncode == 0:
                 # Clear the TextBox before inserting new content
@@ -276,7 +276,7 @@ class SuricataAnsibleGUI:
                 self.ls_textbox.delete("1.0", tk.END)
                 # Show error message if the playbook failed
                 self.ls_textbox.insert(tk.END, f"Error: {result.stderr}")
-        
+
         except Exception as e:
             self.ls_textbox.delete("1.0", tk.END)
             self.ls_textbox.insert(tk.END, f"Exception: {str(e)}")
