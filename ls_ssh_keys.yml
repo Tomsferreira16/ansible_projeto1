@@ -1,0 +1,13 @@
+---
+- name: List contents of the ~/.ssh directory
+  hosts: all
+  become: yes  
+  tasks:
+    - name: List the contents of ~/.ssh
+      command: ls -l ~/.ssh
+      register: ssh_directory_contents
+      ignore_errors: yes
+
+    - name: Show the contents of ~/.ssh
+      debug:
+        msg: "{{ ssh_directory_contents.stdout }}"

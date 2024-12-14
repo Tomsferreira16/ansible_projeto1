@@ -25,6 +25,19 @@ class SuricataAnsibleGUI:
         self.setup_frame = ttk.Frame(self.notebook, padding="10")
         self.notebook.add(self.setup_frame, text="Setup")
 
+        # Configure columns and rows to expand
+        self.setup_frame.grid_columnconfigure(0, weight=1, uniform="equal")
+        self.setup_frame.grid_columnconfigure(1, weight=2, uniform="equal")
+
+        # Rows can also be configured to expand
+        self.setup_frame.grid_rowconfigure(0, weight=0)  # No expansion for the first row (labels)
+        self.setup_frame.grid_rowconfigure(1, weight=0)
+        self.setup_frame.grid_rowconfigure(2, weight=0)
+        self.setup_frame.grid_rowconfigure(3, weight=0)
+        self.setup_frame.grid_rowconfigure(4, weight=1)  # Allow row with TextBox to expand
+        self.setup_frame.grid_rowconfigure(5, weight=0)
+
+        # Labels and Entries
         self.key_name_label = tk.Label(self.setup_frame, text="SSH Key Name:")
         self.key_name_label.grid(row=0, column=0, sticky="w", padx=5, pady=5)
         self.key_name_entry = tk.Entry(self.setup_frame)
@@ -42,6 +55,17 @@ class SuricataAnsibleGUI:
 
         self.create_key_button = tk.Button(self.setup_frame, text="Create & Copy SSH Key", command=self.create_and_copy_key)
         self.create_key_button.grid(row=3, columnspan=2, pady=10, sticky="ew")
+
+        # ---------------------- TextBox and Button for 'ls' ----------------------
+        self.ls_label = tk.Label(self.setup_frame, text="SSH Keys:")
+        self.ls_label.grid(row=4, column=0, sticky="w", padx=5, pady=5)
+        self.ls_textbox = tk.Text(self.setup_frame, height=5, width=40)
+        self.ls_textbox.grid(row=4, column=1, padx=5, pady=5, sticky="ew")
+
+        self.ls_button = tk.Button(self.setup_frame, text="List SSH keys", command=self.list_directory)
+        self.ls_button.grid(row=5, columnspan=2, pady=10, sticky="ew")
+
+
 
         # ---------------------- Inventory Tab ----------------------
         self.inventory_frame = ttk.Frame(self.notebook, padding="10")
@@ -227,6 +251,35 @@ class SuricataAnsibleGUI:
             messagebox.showerror("Error", f"An error occurred: {e}")
         except IOError as e:
             messagebox.showerror("Error", f"An error occurred when writing to .bashrc: {e}")
+
+    # ------------------- list the ssh keys ---------------------------------
+    def list_directory(self):
+        # Ensure that self.inventory_file is set correctly before running
+        if not hasattr(self, 'inventory_file'):
+            self.ls_textbox.delete("1.0", tk.END)
+            self.ls_textbox.insert(tk.END, "Inventory file is not set.\n")
+            return
+        
+        playbook_command = ["ansible-playbook", "-i", self.inventory_file, "ls_ssh_keys.yml"]
+        
+        try:
+            # Execute the ansible-playbook command and capture the output
+            result = subprocess.run(playbook_command, capture_output=True, text=True)
+            
+            # Check if the playbook ran successfully
+            if result.returncode == 0:
+                # Clear the TextBox before inserting new content
+                self.ls_textbox.delete("1.0", tk.END)
+                # Insert the playbook output into the TextBox
+                self.ls_textbox.insert(tk.END, result.stdout)
+            else:
+                self.ls_textbox.delete("1.0", tk.END)
+                # Show error message if the playbook failed
+                self.ls_textbox.insert(tk.END, f"Error: {result.stderr}")
+        
+        except Exception as e:
+            self.ls_textbox.delete("1.0", tk.END)
+            self.ls_textbox.insert(tk.END, f"Exception: {str(e)}")
 
 
     # ---------------------- Inventory Functions ----------------------
