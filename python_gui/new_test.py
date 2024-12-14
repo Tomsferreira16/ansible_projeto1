@@ -270,8 +270,13 @@ class SuricataAnsibleGUI:
             if result.returncode == 0:
                 # Clear the TextBox before inserting new content
                 self.ls_textbox.delete("1.0", tk.END)
-                # Insert the playbook output into the TextBox
-                self.ls_textbox.insert(tk.END, result.stdout)
+
+                # Check if the output contains the key contents
+                if "stdout" in result.stdout:
+                    # Extract and display only the key contents
+                    self.ls_textbox.insert(tk.END, result.stdout.strip())
+                else:
+                    self.ls_textbox.insert(tk.END, "No authorized keys found or unable to access the file.")
             else:
                 self.ls_textbox.delete("1.0", tk.END)
                 # Show error message if the playbook failed
@@ -280,7 +285,6 @@ class SuricataAnsibleGUI:
         except Exception as e:
             self.ls_textbox.delete("1.0", tk.END)
             self.ls_textbox.insert(tk.END, f"Exception: {str(e)}")
-
 
     # ---------------------- Inventory Functions ----------------------
     def save_server(self):

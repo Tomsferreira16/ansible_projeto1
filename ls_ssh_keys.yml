@@ -3,11 +3,24 @@
   hosts: all
   become: yes  # Run with elevated privileges (if needed)
   tasks:
-    - name: List the contents of ~/.ssh/authorized_keys
+    - name: Check if the ~/.ssh/authorized_keys file exists
+      stat:
+        path: ~/.ssh/authorized_keys
+      register: ssh_keys_stat
+
+    - name: List the contents of ~/.ssh/authorized_keys if it exists
       command: cat ~/.ssh/authorized_keys
       register: ssh_authorized_keys_contents
-      ignore_errors: yes  # To prevent the playbook from failing if the file doesn't exist
+      when: ssh_keys_stat.stat.exists
+      ignore_errors: yes
 
     - name: Show the contents of ~/.ssh/authorized_keys
       debug:
         msg: "{{ ssh_authorized_keys_contents.stdout }}"
+      when: ssh_keys_stat.stat.exists
+      ignore_errors: yes
+
+    - name: Notify if the file does not exist
+      debug:
+        msg: "No authorized_keys file found."
+      when: not ssh_keys_stat.stat.exists
