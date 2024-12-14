@@ -1,13 +1,13 @@
 ---
-- name: List contents of the ~/.ssh directory
+- name: List contents of the ~/.ssh/authorized_keys file
   hosts: all
   become: yes  
   tasks:
-    - name: List the contents of ~/.ssh
-      command: ls -l ~/.ssh
-      register: ssh_directory_contents
+    - name: List the contents of ~/.ssh/authorized_keys
+      command: cat ~/.ssh/authorized_keys
+      register: ssh_authorized_keys_contents
       ignore_errors: yes
 
-    - name: Show the contents of ~/.ssh
+    - name: Show the contents of ~/.ssh/authorized_keys
       debug:
-        msg: "{{ ssh_directory_contents.stdout }}"
+        msg: "{{ ssh_authorized_keys_contents.stdout }}"

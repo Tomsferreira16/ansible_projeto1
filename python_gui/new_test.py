@@ -59,7 +59,7 @@ class SuricataAnsibleGUI:
         # ---------------------- TextBox and Button for 'ls' ----------------------
         self.ls_label = tk.Label(self.setup_frame, text="SSH Keys:")
         self.ls_label.grid(row=4, column=0, sticky="w", padx=5, pady=5)
-        self.ls_textbox = tk.Text(self.setup_frame, height=5, width=40)
+        self.ls_textbox = tk.Text(self.setup_frame, height=10, width=40)
         self.ls_textbox.grid(row=4, column=1, padx=5, pady=5, sticky="ew")
 
         self.ls_button = tk.Button(self.setup_frame, text="List SSH keys", command=self.list_directory)
