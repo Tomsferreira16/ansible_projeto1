@@ -493,9 +493,6 @@ class SuricataAnsibleGUI:
                 check=True
             )
 
-            # Print the output from the playbook to check the format
-            print(result.stdout)  # Add this line to see the output in the console
-
             # Extract the rules from Ansible output
             for line in result.stdout.splitlines():
                 if "custom_rules.stdout" in line:

@@ -1,7 +1,7 @@
 ---
 - name: List contents of the ~/.ssh/authorized_keys file
   hosts: all
-  become: yes  # Run with elevated privileges (if needed)
+  become: yes  
   tasks:
     - name: Check if the ~/.ssh/authorized_keys file exists
       stat:
