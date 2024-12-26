@@ -426,7 +426,7 @@ class SuricataAnsibleGUI:
             ], check=True)
 
             # Show success message
-            messagebox.showinfo("Success", "Suricata installation initiated.")
+            messagebox.showinfo("Success", "Suricata installation completed.")
         except subprocess.CalledProcessError as e:
             # Handle error
             messagebox.showerror("Error", f"An error occurred while running the playbook: {e}")
