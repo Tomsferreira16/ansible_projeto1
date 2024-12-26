@@ -189,7 +189,13 @@ class SuricataAnsibleGUI:
 
         self.view_custom_rules_button = tk.Button(self.rules_frame, text="View Custom Rules", command=self.view_custom_rules)
         self.view_custom_rules_button.grid(row=9, columnspan=2, pady=5, sticky="ew")
+        # Adding input box for custom rule to delete
+        self.delete_rule_label = tk.Label(self.rules_frame, text="Custom Rule to Delete:")
+        self.delete_rule_label.grid(row=11, column=0, padx=5, pady=5, sticky="w")
 
+        self.delete_rule_entry = tk.Entry(self.rules_frame)
+        self.delete_rule_entry.grid(row=11, column=1, padx=5, pady=5, sticky="ew")
+        
         self.delete_custom_rules_button = tk.Button(self.rules_frame, text="Delete Custom Rules", command=self.delete_custom_rules)
         self.delete_custom_rules_button.grid(row=10, columnspan=2, pady=5, sticky="ew")
 
@@ -530,28 +536,17 @@ class SuricataAnsibleGUI:
             messagebox.showerror("Error", f"An error occurred: {e}")
 
     def delete_custom_rules(self):
-        # Get the rule to be deleted from the user input
-        action = self.action_var.get()
-        protocol = self.protocol_entry.get()
-        src_ip = self.src_ip_entry.get()
-        src_port = self.src_port_entry.get()
-        dst_ip = self.dst_ip_entry.get()
-        dst_port = self.dst_port_entry.get()
-        msg = self.msg_entry.get()
-        sid = self.sid_entry.get()
+        custom_rule_to_delete = self.delete_rule_entry.get()
 
-        if not action or not protocol or not src_ip or not src_port or not dst_ip or not dst_port or not msg or not sid:
-            messagebox.showerror("Error", "All fields must be filled out.")
+        if not custom_rule_to_delete:
+            messagebox.showerror("Error", "Please enter a rule to delete.")
             return
 
-        # Format the rule to be deleted as a string
-        rule = f"{action} {protocol} {src_ip} {src_port} -> {dst_ip} {dst_port} (msg:\"{msg}\"; sid:{sid};)"
-
-        # Run Ansible playbook to delete the rule
+        # Run Ansible playbook to delete the custom rule
         try:
             subprocess.run([
                 "ansible-playbook", "-i", self.inventory_file, "delete_custom_rule.yml", 
-                "--extra-vars", f"custom_rule='{rule}'"
+                "--extra-vars", f"custom_rule='{custom_rule_to_delete}'"
             ], check=True)
 
             # Display success message

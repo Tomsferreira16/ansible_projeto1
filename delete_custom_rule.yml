@@ -3,6 +3,10 @@
   hosts: all
   become: yes
   tasks:
+    - name: Debug custom rule
+      debug:
+        msg: "Custom rule to delete: {{ custom_rule }}"
+
     - name: Ensure the custom rules directory exists
       file:
         path: "/etc/suricata/rules"
