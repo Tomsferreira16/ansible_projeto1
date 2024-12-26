@@ -3,11 +3,12 @@
   hosts: all
   become: yes
   tasks:
-    - name: Ensure the custom rules directory exists
+    - name: Ensure the custom rules file exists
       file:
-        path: "/etc/suricata/rules"
-        state: directory
-        mode: '0755'
+        path: "/etc/suricata/rules/custom.rules"
+        state: touch  
+        mode: '0644'
+
 
     - name: Add the custom rule to the file
       lineinfile:
