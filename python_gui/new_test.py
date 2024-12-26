@@ -57,15 +57,15 @@ class SuricataAnsibleGUI:
         self.create_key_button = tk.Button(self.setup_frame, text="Create & Copy Public SSH Key To Remote Server", command=self.create_and_copy_key)
         self.create_key_button.grid(row=3, columnspan=2, pady=10, sticky="ew")
 
-        # Add SSH Identity Button 
-        self.ssh_idd_add_button = tk.Button(self.setup_frame, text="Add SSH identity", command=self.add_ssh_identity)
-        self.ssh_idd_add_button.grid(row=4, columnspan=2, pady=10, sticky="ew")
-
-        # Add input field for private key path 
+          # Private Key Path Input Field
         private_key_label = tk.Label(self.setup_frame, text="Enter Private Key Path:")
-        private_key_label.grid(row=5, column=0, sticky="w", padx=5, pady=5)
-        private_key_entry = tk.Entry(self.setup_frame)
-        private_key_entry.grid(row=5, column=1, padx=5, pady=5, sticky="ew")
+        private_key_label.grid(row=4, column=0, sticky="w", padx=5, pady=5)
+        self.private_key_entry = tk.Entry(self.setup_frame)  # Save the reference to the input field
+        self.private_key_entry.grid(row=4, column=1, padx=5, pady=5, sticky="ew")
+
+        # Add the SSH Identity button
+        self.ssh_idd_add_button = tk.Button(self.setup_frame, text="Add SSH identity", command=self.add_ssh_identity)
+        self.ssh_idd_add_button.grid(row=5, columnspan=2, pady=10, sticky="ew")
 
         # TextBox and Button for ls_ssh_keys
         self.ls_label = tk.Label(self.setup_frame, text="SSH Keys on the remote server:")
@@ -322,31 +322,31 @@ class SuricataAnsibleGUI:
         #------------------------Add SSH Identity ---------------
 
     def add_ssh_identity(self):
-            private_key_path = self.private_key_entry.get()  # Get private key path from input field
+        private_key_path = self.private_key_entry.get()  # Get private key path from input field
 
-            # Debugging print to check the input value
-            print(f"Private Key Path: {private_key_path}")
+        # Debugging print to check the input value
+        print(f"Private Key Path: {private_key_path}")
 
-            if not private_key_path:
-                messagebox.showerror("Error", "Private key path must be provided.")
-                return
+        if not private_key_path:
+            messagebox.showerror("Error", "Private key path must be provided.")
+            return
 
-            # Check if the private key file exists
-            if not os.path.isfile(private_key_path):
-                messagebox.showerror("Error", f"The private key file does not exist: {private_key_path}")
-                return
+        # Check if the private key file exists
+        if not os.path.isfile(private_key_path):
+            messagebox.showerror("Error", f"The private key file does not exist: {private_key_path}")
+            return
 
-            try:
-                # Start the SSH agent
-                subprocess.run("eval $(ssh-agent)", check=True, shell=True)
+        try:
+            # Start the SSH agent
+            subprocess.run("eval $(ssh-agent)", check=True, shell=True)
 
-                # Add the private key to the SSH agent using ssh-add
-                subprocess.run(["ssh-add", private_key_path], check=True)
+            # Add the private key to the SSH agent using ssh-add
+            subprocess.run(["ssh-add", private_key_path], check=True)
 
-                # Inform the user of success
-                messagebox.showinfo("Success", f"SSH key {private_key_path} added to the agent successfully.")
-            except subprocess.CalledProcessError as e:
-                messagebox.showerror("Error", f"An error occurred while adding the SSH key: {e}")
+            # Inform the user of success
+            messagebox.showinfo("Success", f"SSH key {private_key_path} added to the agent successfully.")
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"An error occurred while adding the SSH key: {e}")
 
     # ---------------------- Inventory Functions ----------------------
     def save_server(self):
