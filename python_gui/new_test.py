@@ -271,11 +271,10 @@ class SuricataAnsibleGUI:
                 # Clear the TextBox before inserting new content
                 self.ls_textbox.delete("1.0", tk.END)
 
-                # The playbook output is typically in plain text, so we directly insert it
-                # Check if the output contains the key contents (it should display in debug output)
-                if "Display the contents of the authorized_keys file" in result.stdout:
-                    # Extract the key contents from the playbook output
-                    key_contents = result.stdout.split("Display the contents of the authorized_keys file")[1].strip()
+                # Search for the "msg" field in the output and extract the SSH key content
+                if 'msg' in result.stdout:
+                    # Extract the key contents by parsing the line containing "msg"
+                    key_contents = result.stdout.split('"msg":')[1].strip().strip('"')
                     self.ls_textbox.insert(tk.END, key_contents)
                 else:
                     self.ls_textbox.insert(tk.END, "No authorized keys found or unable to access the file.")
