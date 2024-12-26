@@ -4,7 +4,6 @@
   become: yes
   vars:
     ssh_key_path: "/home/tomas/.ssh/authorized_keys"  # Path for tomas' authorized_keys file
-    ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFoy9SlnRW0NadKAr1eKirm6pVxN+dAwzn2Kbt4cKl7A ansible"
 
   tasks:
     - name: Check if the authorized_keys file exists
@@ -18,14 +17,13 @@
         state: touch
       when: not ssh_keys_stat.stat.exists
 
-    - name: Add the SSH key to the authorized_keys file if it's not already present
-      lineinfile:
-        path: "{{ ssh_key_path }}"
-        line: "{{ ssh_key }}"
-        create: yes
+    - name: Show the contents of the authorized_keys file
+      command: cat "{{ ssh_key_path }}"
+      register: ssh_authorized_keys_contents
       when: ssh_keys_stat.stat.exists
 
-    - name: Show the contents of the authorized_keys file
+    - name: Display the contents of the authorized_keys file
       debug:
-        msg: "{{ lookup('file', ssh_key_path) }}"
+        msg: "{{ ssh_authorized_keys_contents.stdout }}"
       when: ssh_keys_stat.stat.exists
+
