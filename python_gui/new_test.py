@@ -324,6 +324,9 @@ class SuricataAnsibleGUI:
     def add_ssh_identity(self):
         private_key_path = self.private_key_entry.get()  # Get private key path from input field
 
+        # Expand '~' to the full home directory path
+        private_key_path = os.path.expanduser(private_key_path)
+
         # Debugging print to check the input value
         print(f"Private Key Path: {private_key_path}")
 
