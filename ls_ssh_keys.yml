@@ -1,9 +1,10 @@
 ---
-- name: Verify root's authorized_keys contents
+- name: Verify and manage tomas' authorized_keys contents
   hosts: all
-  become: yes  # Run tasks as root
+  become: yes
   vars:
-    ssh_key_path: "/root/.ssh/authorized_keys"
+    ssh_key_path: "/home/tomas/.ssh/authorized_keys"  # Path for tomas' authorized_keys file
+    ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFoy9SlnRW0NadKAr1eKirm6pVxN+dAwzn2Kbt4cKl7A ansible"
 
   tasks:
     - name: Check if the authorized_keys file exists
@@ -11,18 +12,20 @@
         path: "{{ ssh_key_path }}"
       register: ssh_keys_stat
 
-    - name: Read the contents of the authorized_keys file if it exists
-      command: cat "{{ ssh_key_path }}"
-      register: ssh_authorized_keys_contents
+    - name: Create the authorized_keys file if it doesn't exist
+      file:
+        path: "{{ ssh_key_path }}"
+        state: touch
+      when: not ssh_keys_stat.stat.exists
+
+    - name: Add the SSH key to the authorized_keys file if it's not already present
+      lineinfile:
+        path: "{{ ssh_key_path }}"
+        line: "{{ ssh_key }}"
+        create: yes
       when: ssh_keys_stat.stat.exists
-      ignore_errors: yes
 
     - name: Show the contents of the authorized_keys file
       debug:
-        msg: "{{ ssh_authorized_keys_contents.stdout }}"
+        msg: "{{ lookup('file', ssh_key_path) }}"
       when: ssh_keys_stat.stat.exists
-
-    - name: Notify if the authorized_keys file does not exist
-      debug:
-        msg: "No authorized_keys file found for root."
-      when: not ssh_keys_stat.stat.exists
