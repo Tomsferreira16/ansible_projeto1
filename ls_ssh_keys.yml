@@ -2,25 +2,27 @@
 - name: List contents of the ~/.ssh/authorized_keys file
   hosts: all
   become: yes  
+  vars:
+    ssh_key_path: "/home/tomas/.ssh/authorized_keys"
   tasks:
-    - name: Check if the ~/.ssh/authorized_keys file exists
+    - name: Check if the authorized_keys file exists
       stat:
-        path: ~/.ssh/authorized_keys
+        path: "{{ ssh_key_path }}"
       register: ssh_keys_stat
 
-    - name: List the contents of ~/.ssh/authorized_keys if it exists
-      command: cat ~/.ssh/authorized_keys
+    - name: List the contents of the authorized_keys file if it exists
+      shell: cat "{{ ssh_key_path }}"
       register: ssh_authorized_keys_contents
       when: ssh_keys_stat.stat.exists
       ignore_errors: yes
 
-    - name: Show the contents of ~/.ssh/authorized_keys
+    - name: Show the contents of the authorized_keys file
       debug:
         msg: "{{ ssh_authorized_keys_contents.stdout }}"
       when: ssh_keys_stat.stat.exists
       ignore_errors: yes
 
-    - name: Notify if the file does not exist
+    - name: Notify if the authorized_keys file does not exist
       debug:
         msg: "No authorized_keys file found."
       when: not ssh_keys_stat.stat.exists
