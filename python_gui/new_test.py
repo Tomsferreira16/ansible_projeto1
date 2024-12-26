@@ -53,11 +53,11 @@ class SuricataAnsibleGUI:
         self.setup_ip_entry = tk.Entry(self.setup_frame)
         self.setup_ip_entry.grid(row=2, column=1, padx=5, pady=5, sticky="ew")
 
-        self.create_key_button = tk.Button(self.setup_frame, text="Create & Copy SSH Key", command=self.create_and_copy_key)
+        self.create_key_button = tk.Button(self.setup_frame, text="Create & Copy Public SSH Key To Remote Server", command=self.create_and_copy_key)
         self.create_key_button.grid(row=3, columnspan=2, pady=10, sticky="ew")
 
         # ---------------------- TextBox and Button for 'ls' ----------------------
-        self.ls_label = tk.Label(self.setup_frame, text="SSH Keys:")
+        self.ls_label = tk.Label(self.setup_frame, text="SSH Keys on the remote server:")
         self.ls_label.grid(row=4, column=0, sticky="w", padx=5, pady=5)
         self.ls_textbox = tk.Text(self.setup_frame, height=20, width=40)
         self.ls_textbox.grid(row=4, column=1, padx=5, pady=5, sticky="ew")
