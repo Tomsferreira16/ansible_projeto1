@@ -28,5 +28,4 @@ This project provides a graphical user interface (GUI) for managing Suricata sec
 1. Clone this repository to your local machine:
 
    ```bash
-   git clone https://github.com/your-username/suricata-ansible-gui.git
-   cd suricata-ansible-gui
+   git clone https://github.com/Tomsferreira16/ansible_projeto1.git
