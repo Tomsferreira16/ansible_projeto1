@@ -1,5 +1,5 @@
 ---
-- name: Add custom Suricata rule
+- name: Delete custom Suricata rule
   hosts: all
   become: yes
   tasks:
@@ -9,10 +9,9 @@
         state: directory
         mode: '0755'
 
-    - name: Add the custom rule to the file
+    - name: Remove the custom rule from the file
       lineinfile:
         path: "/etc/suricata/rules/custom.rules"
-        line: "{{ custom_rule }}"
-        create: yes
-        insertafter: EOF
+        regexp: "{{ custom_rule }}"
+        state: absent
         mode: '0644'
