@@ -1,17 +1,18 @@
 ---
-- name: List contents of the ~/.ssh/authorized_keys file
+- name: Verify root's authorized_keys contents
   hosts: all
-  become: yes  
+  become: yes  # Run tasks as root
   vars:
-    ssh_key_path: "/home/tomas/.ssh/authorized_keys"
+    ssh_key_path: "/root/.ssh/authorized_keys"
+
   tasks:
     - name: Check if the authorized_keys file exists
       stat:
         path: "{{ ssh_key_path }}"
       register: ssh_keys_stat
 
-    - name: List the contents of the authorized_keys file if it exists
-      shell: cat "{{ ssh_key_path }}"
+    - name: Read the contents of the authorized_keys file if it exists
+      command: cat "{{ ssh_key_path }}"
       register: ssh_authorized_keys_contents
       when: ssh_keys_stat.stat.exists
       ignore_errors: yes
@@ -20,9 +21,8 @@
       debug:
         msg: "{{ ssh_authorized_keys_contents.stdout }}"
       when: ssh_keys_stat.stat.exists
-      ignore_errors: yes
 
     - name: Notify if the authorized_keys file does not exist
       debug:
-        msg: "No authorized_keys file found."
+        msg: "No authorized_keys file found for root."
       when: not ssh_keys_stat.stat.exists
