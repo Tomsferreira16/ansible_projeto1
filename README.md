@@ -9,7 +9,7 @@ This project provides a graphical user interface (GUI) for managing Suricata sec
 - **Add SSH Identity**: Add a private SSH key to the SSH agent for secure connections.
 - **Manage Ansible Inventory**: Add, load, and delete servers from an Ansible inventory file.
 - **Install Suricata**: Automatically install Suricata on remote servers via Ansible playbooks.
-- **Change Network Interface**: Modify network interfaces on remote servers using Ansible playbooks.
+- **Change Network Interface**: Modify the monitored network interface on Suricata on the remote servers using Ansible playbooks.
 - **View Suricata Logs**: Retrieve and display Suricata logs (e.g., `fast.log`) from remote servers.
 - **Add Custom Rules**: Add, view, and delete custom Suricata rules for enhanced security monitoring.
 - **Suricata Log Analysis**: Extract and display relevant log content from Suricata logs, filtered by date.
