@@ -9,7 +9,6 @@
         state: touch  
         mode: '0644'
 
-
     - name: Add the custom rule to the file
       lineinfile:
         path: "/etc/suricata/rules/custom.rules"
@@ -19,12 +18,12 @@
         mode: '0644'
 
     - name: Add custom rules file to suricata.yaml under rule-files
-      lineinfile:
+      blockinfile:
         path: "/etc/suricata/suricata.yaml"
-        regexp: '^  - /etc/suricata/rules/custom.rules'
-        line: '  - /etc/suricata/rules/custom.rules'
-        state: present
-        insertafter: '^  rule-files:'
+        regexp: '^rule-files:'
+        insertafter: '^rule-files:'
+        block: |
+          - /etc/suricata/rules/custom.rules
 
     - name: Ensure the file permissions are correct for custom rule file
       file:
