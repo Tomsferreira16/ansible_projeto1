@@ -253,6 +253,8 @@ class SuricataAnsibleGUI:
             messagebox.showerror("Error", f"An error occurred when writing to .bashrc: {e}")
 
     # ------------------- list the ssh keys ---------------------------------
+    
+
     def list_directory(self):
         # Ensure that self.inventory_file is set correctly before running
         if not hasattr(self, 'inventory_file'):
@@ -271,14 +273,19 @@ class SuricataAnsibleGUI:
                 # Clear the TextBox before inserting new content
                 self.ls_textbox.delete("1.0", tk.END)
 
-                # Extract only the "msg" part from the stdout
+                # Extract the output for each host
                 output_lines = result.stdout.splitlines()
+                host_key_contents = []
+
                 for line in output_lines:
                     if '"msg":' in line:
-                        # Extract the key contents by parsing the line containing "msg"
+                        # Extract the SSH key content from the "msg" line
                         key_contents = line.split('"msg":')[1].strip().strip('"')
-                        self.ls_textbox.insert(tk.END, key_contents + "\n")
-                        break
+                        host_key_contents.append(key_contents)
+
+                if host_key_contents:
+                    # Insert the SSH keys for each host into the TextBox
+                    self.ls_textbox.insert(tk.END, "\n".join(host_key_contents) + "\n")
                 else:
                     self.ls_textbox.insert(tk.END, "No authorized keys found or unable to access the file.")
             else:
@@ -289,6 +296,7 @@ class SuricataAnsibleGUI:
         except Exception as e:
             self.ls_textbox.delete("1.0", tk.END)
             self.ls_textbox.insert(tk.END, f"Exception: {str(e)}")
+
     # ---------------------- Inventory Functions ----------------------
     def save_server(self):
         # Get the input values
