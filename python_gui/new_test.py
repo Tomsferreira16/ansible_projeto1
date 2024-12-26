@@ -271,10 +271,12 @@ class SuricataAnsibleGUI:
                 # Clear the TextBox before inserting new content
                 self.ls_textbox.delete("1.0", tk.END)
 
-                # Check if the output contains the key contents
-                if "stdout" in result.stdout:
-                    # Extract and display only the key contents
-                    self.ls_textbox.insert(tk.END, result.stdout.strip())
+                # The playbook output is typically in plain text, so we directly insert it
+                # Check if the output contains the key contents (it should display in debug output)
+                if "Display the contents of the authorized_keys file" in result.stdout:
+                    # Extract the key contents from the playbook output
+                    key_contents = result.stdout.split("Display the contents of the authorized_keys file")[1].strip()
+                    self.ls_textbox.insert(tk.END, key_contents)
                 else:
                     self.ls_textbox.insert(tk.END, "No authorized keys found or unable to access the file.")
             else:
@@ -285,7 +287,6 @@ class SuricataAnsibleGUI:
         except Exception as e:
             self.ls_textbox.delete("1.0", tk.END)
             self.ls_textbox.insert(tk.END, f"Exception: {str(e)}")
-
     # ---------------------- Inventory Functions ----------------------
     def save_server(self):
         # Get the input values
