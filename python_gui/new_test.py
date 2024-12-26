@@ -271,11 +271,14 @@ class SuricataAnsibleGUI:
                 # Clear the TextBox before inserting new content
                 self.ls_textbox.delete("1.0", tk.END)
 
-                # Search for the "msg" field in the output and extract the SSH key content
-                if 'msg' in result.stdout:
-                    # Extract the key contents by parsing the line containing "msg"
-                    key_contents = result.stdout.split('"msg":')[1].strip().strip('"')
-                    self.ls_textbox.insert(tk.END, key_contents)
+                # Extract only the "msg" part from the stdout
+                output_lines = result.stdout.splitlines()
+                for line in output_lines:
+                    if '"msg":' in line:
+                        # Extract the key contents by parsing the line containing "msg"
+                        key_contents = line.split('"msg":')[1].strip().strip('"')
+                        self.ls_textbox.insert(tk.END, key_contents + "\n")
+                        break
                 else:
                     self.ls_textbox.insert(tk.END, "No authorized keys found or unable to access the file.")
             else:
