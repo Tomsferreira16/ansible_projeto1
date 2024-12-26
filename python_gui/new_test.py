@@ -437,7 +437,7 @@ class SuricataAnsibleGUI:
 
         if interface:
             # Run the change_interface.yml playbook with the selected interface as a variable
-            subprocess.run(["ansible-playbook", "~/playbook_ansible/change_interface.yml", "-e", f"interface={interface}"])
+            subprocess.run(["ansible-playbook", "change_interface.yml", "-e", f"interface={interface}"])
         else:
             print("Please enter a valid interface.")
 

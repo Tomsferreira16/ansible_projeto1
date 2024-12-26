@@ -1,5 +1,5 @@
 ---
-- name: Install and configure Suricata
+- name: Change Interface on suricata.yaml
   hosts: all
   become: true
   vars:
