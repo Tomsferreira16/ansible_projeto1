@@ -139,7 +139,7 @@ class SuricataAnsibleGUI:
         self.logs_frame.grid_columnconfigure(0, weight=1)
         self.logs_frame.grid_columnconfigure(1, weight=3)
 
-        # ---------------------- Custom Rules Tab ----------------------
+    # ---------------------- Custom Rules Tab ----------------------
         self.rules_frame = ttk.Frame(self.notebook, padding="10")
         self.notebook.add(self.rules_frame, text="Custom Rules")
 
@@ -189,25 +189,26 @@ class SuricataAnsibleGUI:
 
         self.view_custom_rules_button = tk.Button(self.rules_frame, text="View Custom Rules", command=self.view_custom_rules)
         self.view_custom_rules_button.grid(row=9, columnspan=2, pady=5, sticky="ew")
+
         # Adding input box for custom rule to delete
         self.delete_rule_label = tk.Label(self.rules_frame, text="Custom Rule to Delete:")
-        self.delete_rule_label.grid(row=11, column=0, padx=5, pady=5, sticky="w")
+        self.delete_rule_label.grid(row=10, column=0, padx=5, pady=5, sticky="w")
 
         self.delete_rule_entry = tk.Entry(self.rules_frame)
-        self.delete_rule_entry.grid(row=11, column=1, padx=5, pady=5, sticky="ew")
-        
-        self.delete_custom_rules_button = tk.Button(self.rules_frame, text="Delete Custom Rules", command=self.delete_custom_rules)
-        self.delete_custom_rules_button.grid(row=10, columnspan=2, pady=5, sticky="ew")
+        self.delete_rule_entry.grid(row=10, column=1, padx=5, pady=5, sticky="ew")
 
+        self.delete_custom_rules_button = tk.Button(self.rules_frame, text="Delete Custom Rule", command=self.delete_custom_rules)
+        self.delete_custom_rules_button.grid(row=11, columnspan=2, pady=5, sticky="ew")
 
+        # Adding custom rules text box below the delete button
         self.custom_rules_text = tk.Text(self.rules_frame, height=15, width=60)
-        self.custom_rules_text.grid(row=11, columnspan=2, padx=5, pady=5, sticky="nsew")
+        self.custom_rules_text.grid(row=12, columnspan=2, padx=5, pady=5, sticky="nsew")
 
         # Ensure the custom rules text box expands with the window
-        self.rules_frame.grid_rowconfigure(10, weight=1)
+        self.rules_frame.grid_rowconfigure(12, weight=1)  # Allow row 12 to expand
         self.rules_frame.grid_columnconfigure(0, weight=1)
         self.rules_frame.grid_columnconfigure(1, weight=3)
-
+        
 
     # ---------------------- Setup SSH Key Tab ----------------------
     def create_and_copy_key(self):
