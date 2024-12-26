@@ -13,9 +13,14 @@
         state: directory
         mode: '0755'
 
-    - name: Remove the custom rule from the file
-      lineinfile:
+    - name: Remove the custom rule from the file using blockinfile
+      blockinfile:
         path: "/etc/suricata/rules/custom.rules"
-        regexp: "{{ custom_rule }}"
+        block: |
+          {{ custom_rule }}
         state: absent
+
+    - name: Ensure the file permissions are correct
+      file:
+        path: "/etc/suricata/rules/custom.rules"
         mode: '0644'
