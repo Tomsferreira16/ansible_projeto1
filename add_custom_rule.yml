@@ -1,5 +1,5 @@
 ---
-- name: Add custom Suricata rule
+- name: Add custom Suricata rule and update suricata.yaml
   hosts: all
   become: yes
   tasks:
@@ -15,4 +15,22 @@
         line: "{{ custom_rule }}"
         create: yes
         insertafter: EOF
+        mode: '0644'
+
+    - name: Add custom rules file to suricata.yaml under rule-files
+      lineinfile:
+        path: "/etc/suricata/suricata.yaml"
+        regexp: '^  - /etc/suricata/rules/custom.rules'
+        line: '  - /etc/suricata/rules/custom.rules'
+        state: present
+        insertafter: '^  rule-files:'
+
+    - name: Ensure the file permissions are correct for custom rule file
+      file:
+        path: "/etc/suricata/rules/custom.rules"
+        mode: '0644'
+
+    - name: Ensure the file permissions are correct for suricata.yaml
+      file:
+        path: "/etc/suricata/suricata.yaml"
         mode: '0644'
