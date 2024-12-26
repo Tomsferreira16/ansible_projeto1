@@ -9,14 +9,16 @@
       register: fast_log_stat
 
     - name: Display fast.log content if it exists
-      shell: cat /var/log/suricata/fast.log | awk '{$1=$1;print}'  # Trim and normalize whitespace
+      shell: cat /var/log/suricata/fast.log
       when: fast_log_stat.stat.exists
       register: fast_log_contents
       changed_when: false
 
     - name: Output fast.log content
       debug:
-        msg: "{{ fast_log_contents.stdout }}"
+        msg: |
+          Fast.log Content:
+          {{ fast_log_contents.stdout }}
       when: fast_log_stat.stat.exists
 
     - name: Error message if fast.log does not exist
