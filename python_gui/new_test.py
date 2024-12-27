@@ -67,7 +67,7 @@ class SuricataAnsibleGUI:
         self.ssh_idd_add_button = tk.Button(self.setup_frame, text="Add SSH identity", command=self.add_ssh_identity)
         self.ssh_idd_add_button.grid(row=5, columnspan=2, pady=10, sticky="ew")
 
-        # Remote SSH Key Path Input Field
+       # Remote SSH Key Path Input Field
         remote_key_path_label = tk.Label(self.setup_frame, text="Enter Remote SSH Key Path:")
         remote_key_path_label.grid(row=6, column=0, sticky="w", padx=5, pady=5)
         self.remote_key_path_entry = tk.Entry(self.setup_frame)  # Save the reference to the input field
@@ -284,8 +284,8 @@ class SuricataAnsibleGUI:
     
 
     def list_directory(self):
-        # Get the SSH key path from the input field
-        remote_key_path = self.remote_key_path_entry.get()
+        # Get the SSH key path from the input field and expand '~' to full path
+        remote_key_path = os.path.expanduser(self.remote_key_path_entry.get())
 
         if not remote_key_path:
             self.ls_textbox.delete("1.0", tk.END)
@@ -302,7 +302,7 @@ class SuricataAnsibleGUI:
         playbook_command = [
             "ansible-playbook",
             "-i", self.inventory_file,
-            "-e", f"ssh_key_path={remote_key_path}",  # Pass the SSH key path as an extra variable
+            "-e", f"ssh_key_path={remote_key_path}",  # Pass the expanded SSH key path
             "ls_ssh_keys.yml"
         ]
 
