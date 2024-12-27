@@ -338,7 +338,7 @@ class SuricataAnsibleGUI:
         except Exception as e:
             self.ls_textbox.delete("1.0", tk.END)
             self.ls_textbox.insert(tk.END, f"Exception: {str(e)}")
-        
+
         #------------------------Add SSH Identity ---------------
     def add_ssh_identity(self):
         private_key_path = self.private_key_entry.get()  # Get private key path from input field
