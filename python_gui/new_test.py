@@ -339,15 +339,15 @@ class SuricataAnsibleGUI:
             return
 
         try:
-            # Call the ssha alias with the private key path
-            subprocess.run(f"ssha {private_key_path}", check=True, shell=True)
+            # Run the full command instead of alias
+            subprocess.run(f"eval $(ssh-agent) && ssh-add {private_key_path}", check=True, shell=True)
 
             # Inform the user of success
             messagebox.showinfo("Success", f"SSH key {private_key_path} added to the agent successfully.")
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"An error occurred while adding the SSH key: {e}")
         except Exception as e:
-            messagebox.showerror("Error", f"Unexpected error: {e}")
+            messagebox.showerror("Error", f"Unexpected error: {e}") 
     
     # ---------------------- Inventory Functions ----------------------
     def save_server(self):
