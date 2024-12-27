@@ -18,11 +18,10 @@
         insertafter: EOF
         mode: '0644'
 
-    # Replace rule-files section in suricata.yaml
-    - name: Update rule-files in suricata.yaml with custom.rules
+    # Replace the rule-files section in suricata.yaml without markers
+    - name: Replace the rule-files section in suricata.yaml
       blockinfile:
         path: /etc/suricata/suricata.yaml
-        marker: "# CUSTOM RULE-FILES"
         block: |
           rule-files:
             - suricata.rules
