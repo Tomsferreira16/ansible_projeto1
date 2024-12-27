@@ -18,14 +18,17 @@
         insertafter: EOF
         mode: '0644'
 
-    # Ensure 'custom.rules' is added to rule-files in suricata.yaml without removing other entries
-    - name: Add 'custom.rules' to rule-files in suricata.yaml
+    # Replace rule-files section in suricata.yaml
+    - name: Update rule-files in suricata.yaml with custom.rules
       blockinfile:
         path: /etc/suricata/suricata.yaml
         marker: "# CUSTOM RULE-FILES"
         block: |
-          - custom.rules
-      notify: Restart Suricata
+          rule-files:
+            - suricata.rules
+            - custom.rules
+        create: yes
+        insertafter: '^rule-files:'
 
   handlers:
     - name: Restart Suricata
