@@ -6,7 +6,6 @@
     - name: Display custom rules file
       command: cat /etc/suricata/rules/custom.rules
       register: custom_rules
-
     - name: Output custom rules content
       debug:
         var: custom_rules.stdout

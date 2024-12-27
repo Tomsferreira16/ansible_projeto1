@@ -1,14 +1,12 @@
+---
 - name: Add custom Suricata rule and update suricata.yaml
   hosts: all
   become: yes
-  vars:
-    custom_rule: "alert icmp any any -> any any (msg:\"Custom ICMP alert\"; sid:1000001; rev:1;)"
   tasks:
-    # Ensure the custom rules file exists
     - name: Ensure the custom rules file exists
       file:
         path: "/etc/suricata/rules/custom.rules"
-        state: touch
+        state: touch  
         mode: '0644'
 
     # Add the custom rule to the file
@@ -20,17 +18,18 @@
         insertafter: EOF
         mode: '0644'
 
-    # Add 'custom.rules' to the suricata.yaml rule-files section
+    # Ensure 'custom.rules' is in the suricata.yaml rule-files section
     - name: Add 'custom.rules' to rule-files in suricata.yaml
       lineinfile:
         path: /etc/suricata/suricata.yaml
         regexp: '^\s*rule-files:\s*$'  # Match the line 'rule-files:'
-        line: "  rule-files:\n    - custom.rules"  # Add 'custom.rules' below 'rule-files:'
-        state: present
-        insertafter: '^\s*rule-files:\s*$'  # Ensure the line is added below 'rule-files:'
+        insertafter: '^\s*rule-files:\s*$'
+        line: "    - custom.rules"  # Correct indentation for YAML
+      notify: Restart Suricata
 
   handlers:
     - name: Restart Suricata
       service:
         name: suricata
         state: restarted
+  
