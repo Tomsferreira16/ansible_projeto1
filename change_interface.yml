@@ -3,14 +3,14 @@
   hosts: all
   become: true
   vars:
-    interface: "{{ lookup('env', 'interface') }}"  # Lookup the interface from environment variable
+    interface: "{{ lookup('env', 'interface') | default('eth0', true) }}"  # Fallback to 'eth0' if env variable is not set
 
   tasks:
-    - name: Replace all occurrences of interface eth0 in the file
+    - name: Replace all occurrences of interface with the desired value
       lineinfile:
         path: /etc/suricata/suricata.yaml
-        regexp: 'interface:\s*eth0'  # Match the interface eth0 line
-        line: 'interface: {{ interface }}'  # Replace with the provided interface variable
+        regexp: '^\s*-\s*interface:\s*.*$'  # Match lines starting with `- interface:`
+        line: '  - interface: {{ interface }}'  # Replace with the correct interface value
       notify: Restart Suricata
 
   handlers:
