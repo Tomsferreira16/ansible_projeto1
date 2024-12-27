@@ -25,7 +25,6 @@
         regexp: '^rule-files:.*'
         line: |
           rule-files:
-            - suricata.rules
             - custom.rules
         create: yes
         backup: yes
