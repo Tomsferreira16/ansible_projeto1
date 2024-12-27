@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import subprocess
 import os
+import re
 
 
 
@@ -493,7 +494,7 @@ class SuricataAnsibleGUI:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to view Suricata logs: {e}")
 
-    import re
+   
 
     def extract_log_content(self, playbook_output):
         # Extract log content: We assume the log entries begin after the "msg" field
