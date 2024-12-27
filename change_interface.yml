@@ -1,4 +1,3 @@
----
 - name: Change Interface on suricata.yaml
   hosts: all
   become: true
@@ -7,10 +6,10 @@
 
   tasks:
     - name: Replace all occurrences of interface with the desired value
-      lineinfile:
+      replace:
         path: /etc/suricata/suricata.yaml
-        regexp: '^\s*-\s*interface:\s*.*$'  # Match lines starting with `- interface:`
-        line: '  - interface: {{ interface }}'  # Replace with the correct interface value
+        regexp: '^\s*-\s*interface:\s*\w+'
+        replace: '  - interface: {{ interface }}'
       notify: Restart Suricata
 
   handlers:
