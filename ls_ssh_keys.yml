@@ -1,21 +1,14 @@
----
-- name: Verify and manage tomas' authorized_keys contents
+- name: Verify and manage SSH key contents
   hosts: all
   become: yes
   vars:
-    ssh_key_path: "/home/tomas/.ssh/authorized_keys"  # Path for tomas' authorized_keys file
+    ssh_key_path: "{{ ssh_key_path }}"  # Use the passed variable
 
   tasks:
     - name: Check if the authorized_keys file exists
       stat:
         path: "{{ ssh_key_path }}"
       register: ssh_keys_stat
-
-    - name: Create the authorized_keys file if it doesn't exist
-      file:
-        path: "{{ ssh_key_path }}"
-        state: touch
-      when: not ssh_keys_stat.stat.exists
 
     - name: Show the contents of the authorized_keys file
       command: cat "{{ ssh_key_path }}"
@@ -26,4 +19,3 @@
       debug:
         msg: "{{ ssh_authorized_keys_contents.stdout }}"
       when: ssh_keys_stat.stat.exists
-

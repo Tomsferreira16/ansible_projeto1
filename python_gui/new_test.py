@@ -67,14 +67,20 @@ class SuricataAnsibleGUI:
         self.ssh_idd_add_button = tk.Button(self.setup_frame, text="Add SSH identity", command=self.add_ssh_identity)
         self.ssh_idd_add_button.grid(row=5, columnspan=2, pady=10, sticky="ew")
 
+        # Remote SSH Key Path Input Field
+        remote_key_path_label = tk.Label(self.setup_frame, text="Enter Remote SSH Key Path:")
+        remote_key_path_label.grid(row=6, column=0, sticky="w", padx=5, pady=5)
+        self.remote_key_path_entry = tk.Entry(self.setup_frame)  # Save the reference to the input field
+        self.remote_key_path_entry.grid(row=6, column=1, padx=5, pady=5, sticky="ew")
+
         # TextBox and Button for ls_ssh_keys
         self.ls_label = tk.Label(self.setup_frame, text="SSH Keys on the remote server:")
-        self.ls_label.grid(row=6, column=0, sticky="w", padx=5, pady=5)
+        self.ls_label.grid(row=7, column=0, sticky="w", padx=5, pady=5)
         self.ls_textbox = tk.Text(self.setup_frame, height=20, width=40)
-        self.ls_textbox.grid(row=6, column=1, padx=5, pady=5, sticky="ew")
+        self.ls_textbox.grid(row=7, column=1, padx=5, pady=5, sticky="ew")
 
         self.ls_button = tk.Button(self.setup_frame, text="List SSH keys", command=self.list_directory)
-        self.ls_button.grid(row=7, columnspan=2, pady=10, sticky="ew")
+        self.ls_button.grid(row=8, columnspan=2, pady=10, sticky="ew")
 
 
 
@@ -278,13 +284,27 @@ class SuricataAnsibleGUI:
     
 
     def list_directory(self):
-        # Ensure that self.inventory_file is set correctly before running
+        # Get the SSH key path from the input field
+        remote_key_path = self.remote_key_path_entry.get()
+
+        if not remote_key_path:
+            self.ls_textbox.delete("1.0", tk.END)
+            self.ls_textbox.insert(tk.END, "Please enter a valid SSH key path.\n")
+            return
+
+        # Assuming self.inventory_file is already set correctly
         if not hasattr(self, 'inventory_file'):
             self.ls_textbox.delete("1.0", tk.END)
             self.ls_textbox.insert(tk.END, "Inventory file is not set.\n")
             return
 
-        playbook_command = ["ansible-playbook", "-i", self.inventory_file, "ls_ssh_keys.yml"]
+        # Playbook command with the SSH key path passed as a variable
+        playbook_command = [
+            "ansible-playbook",
+            "-i", self.inventory_file,
+            "-e", f"ssh_key_path={remote_key_path}",  # Pass the SSH key path as an extra variable
+            "ls_ssh_keys.yml"
+        ]
 
         try:
             # Execute the ansible-playbook command and capture the output
