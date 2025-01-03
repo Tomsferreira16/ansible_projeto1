@@ -14,7 +14,7 @@ class SuricataAnsibleGUI:
         self.root.title("Suricata & Ansible Management")
 
         # Path to the inventory file
-        self.inventory_file = "/home/tomas/ansible_projeto1/inventory"
+        self.inventory_file = os.path.expanduser("~/ansible_projeto1/inventory")
 
         # Creating the Notebook for tabs
         self.notebook = ttk.Notebook(root)
