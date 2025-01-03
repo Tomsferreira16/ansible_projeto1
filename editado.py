@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 import subprocess
 import os
 import re
-
+from datetime import datetime
 
 
 
@@ -234,6 +234,42 @@ class SuricataAnsibleGUI:
         self.rules_frame.grid_rowconfigure(12, weight=1)  # Allow row 12 to expand
         self.rules_frame.grid_columnconfigure(0, weight=1)
         self.rules_frame.grid_columnconfigure(1, weight=3)
+
+    # ---------------------- Analyze Logs Tab ----------------------
+
+     # Create the analyze tab
+        self.analyze_frame = ttk.Frame(self.notebook, padding="10")
+        self.notebook.add(self.analyze_frame, text="Analyze Logs")
+
+        # Create the text box to display log content
+        self.log_text = tk.Text(self.analyze_frame, wrap=tk.WORD, height=15, width=80, font=("Helvetica", 12))
+        self.log_text.grid(row=0, column=0, columnspan=4, padx=10, pady=10, sticky="nsew")
+
+        # Button to load the log file
+        self.load_button = tk.Button(self.analyze_frame, text="Load Log File", command=self.load_log_file, font=("Helvetica", 12))
+        self.load_button.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
+
+        # Filter buttons
+        self.filter_ip_button = tk.Button(self.analyze_frame, text="Filter by IP", command=self.filter_by_ip, font=("Helvetica", 12))
+        self.filter_ip_button.grid(row=2, column=0, padx=10, pady=5, sticky="ew")
+
+        self.filter_date_button = tk.Button(self.analyze_frame, text="Filter by Date", command=self.filter_by_date, font=("Helvetica", 12))
+        self.filter_date_button.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
+
+        self.filter_protocol_button = tk.Button(self.analyze_frame, text="Filter by Protocol", command=self.filter_by_protocol, font=("Helvetica", 12))
+        self.filter_protocol_button.grid(row=2, column=2, padx=10, pady=5, sticky="ew")
+
+        self.clear_button = tk.Button(self.analyze_frame, text="Clear Filters", command=self.clear_filters, font=("Helvetica", 12))
+        self.clear_button.grid(row=2, column=3, padx=10, pady=5, sticky="ew")
+
+        # Configure rows and columns to expand with the window
+        self.analyze_frame.grid_rowconfigure(0, weight=1)  # Make text widget expand
+        self.analyze_frame.grid_rowconfigure(1, weight=0)
+        self.analyze_frame.grid_rowconfigure(2, weight=0)
+        self.analyze_frame.grid_columnconfigure(0, weight=1)
+        self.analyze_frame.grid_columnconfigure(1, weight=1)
+        self.analyze_frame.grid_columnconfigure(2, weight=1)
+        self.analyze_frame.grid_columnconfigure(3, weight=1)
         
 
     # ---------------------- Setup SSH Key Tab ----------------------
@@ -642,6 +678,74 @@ class SuricataAnsibleGUI:
             messagebox.showinfo("Success", "Custom rule deleted.")
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
+
+    # ---------------------- Analyze Logs ----------------------
+     # Initialize log data variables
+        self.logs = []
+        self.filtered_logs = []
+
+    def load_log_file(self):
+        # Open file dialog to load the .txt log file
+        file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt")])
+        if not file_path:
+            return
+
+        try:
+            with open(file_path, "r") as file:
+                self.logs = file.readlines()
+                self.filtered_logs = self.logs  # Initially, no filter, show all logs
+                self.display_logs(self.filtered_logs)
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to load log file: {e}")
+
+    def display_logs(self, logs):
+        self.log_text.delete(1.0, tk.END)  # Clear the text box
+        if logs:
+            self.log_text.insert(tk.END, ''.join(logs))  # Display logs in the text box
+        else:
+            self.log_text.insert(tk.END, "No logs to display.")
+
+    def filter_by_ip(self):
+        ip = self.get_input("Enter IP Address to Filter by:")
+        if ip:
+            filtered_logs = [log for log in self.logs if ip in log]
+            self.filtered_logs = filtered_logs
+            self.display_logs(self.filtered_logs)
+
+    def filter_by_date(self):
+        date_str = self.get_input("Enter Date (MM/DD/YYYY) to Filter by:")
+        try:
+            # Validate the date format
+            date_obj = datetime.strptime(date_str, "%m/%d/%Y")
+            filtered_logs = [log for log in self.logs if self.match_date(log, date_obj)]
+            self.filtered_logs = filtered_logs
+            self.display_logs(self.filtered_logs)
+        except ValueError:
+            messagebox.showerror("Error", "Invalid date format. Please use MM/DD/YYYY.")
+
+    def filter_by_protocol(self):
+        protocol = self.get_input("Enter Protocol to Filter by:")
+        if protocol:
+            filtered_logs = [log for log in self.logs if protocol.lower() in log.lower()]
+            self.filtered_logs = filtered_logs
+            self.display_logs(self.filtered_logs)
+
+    def get_input(self, prompt):
+        input_dialog = tk.simpledialog.askstring("Input", prompt)
+        return input_dialog.strip() if input_dialog else None
+
+    def match_date(self, log, date_obj):
+        # Extract the date from the log string (assuming the date format is MM/DD/YYYY)
+        date_str = log.split()[0]  # The date is at the start of the log line
+        try:
+            log_date_obj = datetime.strptime(date_str, "%m/%d/%Y")
+            return log_date_obj.date() == date_obj.date()
+        except ValueError:
+            return False
+
+    def clear_filters(self):
+        self.filtered_logs = self.logs  # Reset to all logs
+        self.display_logs(self.filtered_logs)
 
             
 
