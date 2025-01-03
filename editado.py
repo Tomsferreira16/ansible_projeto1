@@ -142,19 +142,39 @@ class SuricataAnsibleGUI:
         self.install_frame.grid_columnconfigure(1, weight=2)
 
         # ---------------------- Suricata Logs Tab ----------------------
+        # Suricata Logs Tab
         self.logs_frame = ttk.Frame(self.notebook, padding="10")
         self.notebook.add(self.logs_frame, text="Suricata Logs")
 
-        self.view_logs_button = tk.Button(self.logs_frame, text="View Logs", command=self.view_logs)
-        self.view_logs_button.grid(row=0, columnspan=2, pady=10, sticky="ew")
+        # Filter Frame (inside logs_frame)
+        self.filter_frame = ttk.Frame(self.logs_frame, padding="5")
+        self.filter_frame.grid(row=0, column=0, columnspan=2, sticky="ew")
 
+        # Date Filter
+        self.date_label = ttk.Label(self.filter_frame, text="Filter by Date (MM/DD/YYYY):")
+        self.date_label.grid(row=0, column=0, padx=5, sticky="w")
+        self.date_entry = ttk.Entry(self.filter_frame)
+        self.date_entry.grid(row=0, column=1, padx=5, sticky="ew")
+
+        # IP Filter
+        self.ip_label = ttk.Label(self.filter_frame, text="Filter by IP:")
+        self.ip_label.grid(row=1, column=0, padx=5, sticky="w")
+        self.ip_entry = ttk.Entry(self.filter_frame)
+        self.ip_entry.grid(row=1, column=1, padx=5, sticky="ew")
+
+        # View Logs Button
+        self.view_logs_button = tk.Button(self.logs_frame, text="View Logs", command=self.view_logs)
+        self.view_logs_button.grid(row=1, column=0, columnspan=2, pady=10, sticky="ew")
+
+        # Logs Text Box
         self.log_text = tk.Text(self.logs_frame, height=15, width=60)
-        self.log_text.grid(row=1, columnspan=2, padx=5, pady=5, sticky="nsew")
+        self.log_text.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky="nsew")
 
         # Ensure the logs text box expands with the window
-        self.logs_frame.grid_rowconfigure(1, weight=1)
+        self.logs_frame.grid_rowconfigure(2, weight=1)
         self.logs_frame.grid_columnconfigure(0, weight=1)
-        self.logs_frame.grid_columnconfigure(1, weight=3)
+        self.logs_frame.grid_columnconfigure(1, weight=1)
+
 
     # ---------------------- Custom Rules Tab ----------------------
         self.rules_frame = ttk.Frame(self.notebook, padding="10")
@@ -462,43 +482,50 @@ class SuricataAnsibleGUI:
 
     # ---------------------- Suricata Logs ----------------------
     def view_logs(self):
-        # Path to your playbook
-        playbook_path = "/home/tomas/ansible_projeto1/read_log.yml"  # Update this path if necessary
+        playbook_path = "/home/tomas/ansible_projeto1/read_log.yml"
+
+        # Get filter values from input fields (add these in the GUI)
+        log_date = self.date_entry.get().strip()  # Assume a date entry field is added
+        log_ip = self.ip_entry.get().strip()  # Assume an IP entry field is added
 
         try:
-            # Run the Ansible playbook and capture the output
+            # Build extra_vars based on user input
+            extra_vars = {}
+            if log_date:
+                extra_vars["log_date"] = log_date
+            if log_ip:
+                extra_vars["log_ip"] = log_ip
+
+            # Construct extra_vars string
+            extra_vars_str = " ".join([f"{key}={value}" for key, value in extra_vars.items()])
+
+            # Run the Ansible playbook with filtering criteria
             result = subprocess.run(
                 [
                     "ansible-playbook", 
                     "-i", self.inventory_file, 
                     playbook_path, 
-                    "--extra-vars", "log_path=/var/log/suricata/fast.log"
+                    "--extra-vars", extra_vars_str
                 ],
                 capture_output=True,
                 text=True,
                 check=True
             )
 
-            # The output of the playbook (stdout)
             playbook_output = result.stdout
 
-            # Check if the playbook output contains the logs or an error message
             if "Error: fast.log file not found." in playbook_output:
                 messagebox.showerror("Error", "Suricata fast.log file not found.")
             else:
-                # Extract only the content of the fast.log file from the output
                 log_content = self.extract_log_content(playbook_output)
-
-                # Display the content of the fast.log in the text widget
-                self.log_text.delete(1.0, tk.END)  # Clear the text box
-                self.log_text.insert(tk.END, log_content)  # Insert the extracted log content
+                self.log_text.delete(1.0, tk.END)
+                self.log_text.insert(tk.END, log_content)
 
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"Ansible playbook execution failed: {e}")
         except Exception as e:
             messagebox.showerror("Error", f"Failed to view Suricata logs: {e}")
 
-    import re
 
     def extract_log_content(self, playbook_output):
         # Extract log content: We assume the log entries begin after the "msg" field

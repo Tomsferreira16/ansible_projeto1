@@ -1,5 +1,5 @@
 ---
-- name: Read Suricata fast.log file
+- name: Read and filter Suricata fast.log file
   hosts: all
   become: true
   tasks:
@@ -8,17 +8,24 @@
         path: /var/log/suricata/fast.log
       register: fast_log_stat
 
-    - name: Display fast.log content if it exists
-      shell: cat /var/log/suricata/fast.log
+    - name: Filter fast.log by date or IP
+      shell: |
+        if [[ -n "{{ log_date }}" ]]; then
+          grep "{{ log_date }}" /var/log/suricata/fast.log
+        elif [[ -n "{{ log_ip }}" ]]; then
+          grep "{{ log_ip }}" /var/log/suricata/fast.log
+        else
+          cat /var/log/suricata/fast.log
+        fi
       when: fast_log_stat.stat.exists
-      register: fast_log_contents
+      register: filtered_logs
       changed_when: false
 
-    - name: Output fast.log content
+    - name: Output filtered fast.log content
       debug:
         msg: |
-          Fast.log Content:
-          {{ fast_log_contents.stdout }}
+          Filtered Log Content:
+          {{ filtered_logs.stdout }}
       when: fast_log_stat.stat.exists
 
     - name: Error message if fast.log does not exist
