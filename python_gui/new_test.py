@@ -154,9 +154,10 @@ class SuricataAnsibleGUI:
         self.log_text = tk.Text(self.logs_frame, height=15, width=60)
         self.log_text.grid(row=1, columnspan=2, padx=5, pady=5, sticky="nsew")
 
-        # Export Logs Button
-        self.export_button = tk.Button(self.logs_frame, text="Export Logs to HTML", command=self.export_logs_to_html)
+        # Export Logs Button for TXT
+        self.export_button = tk.Button(self.logs_frame, text="Export Logs to TXT", command=self.export_logs_to_txt)
         self.export_button.grid(row=2, columnspan=2, pady=10, sticky="ew")
+
 
         # Ensure the logs text box expands with the window
         self.logs_frame.grid_rowconfigure(1, weight=1)
@@ -538,24 +539,22 @@ class SuricataAnsibleGUI:
         else:
             return "No log content found."  # In case no log content is found
         
-    def export_logs_to_html(self):
-            # Get the log content from the text widget
-            log_content = self.log_text.get(1.0, tk.END).strip()
+    def export_logs_to_txt(self):
+        # Get the log content from the text widget
+        log_content = self.log_text.get(1.0, tk.END).strip()
 
-            # Check if there is any log content
-            if log_content:
-                try:
-                    # Create an HTML file and write the log content into it
-                    with open("/home/tomas/ansible_projeto1/suricata_logs.html", "w") as html_file:
-                        html_file.write("<html><body><h1>Suricata Logs</h1>")
-                        html_file.write("<pre>" + log_content + "</pre>")  # Wrap log content in <pre> for formatting
-                        html_file.write("</body></html>")
-                    
-                    messagebox.showinfo("Success", "Logs exported to HTML successfully.")
-                except Exception as e:
-                    messagebox.showerror("Error", f"Failed to export logs to HTML: {e}")
-            else:
-                messagebox.showwarning("Warning", "No log content to export.")
+        # Check if there is any log content
+        if log_content:
+            try:
+                # Create a text file and write the log content into it
+                with open("/home/tomas/ansible_projeto1/suricata_logs.txt", "w") as txt_file:
+                    txt_file.write(log_content)
+                
+                messagebox.showinfo("Success", "Logs exported to TXT successfully.")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to export logs to TXT: {e}")
+        else:
+            messagebox.showwarning("Warning", "No log content to export.")
 
 
 
