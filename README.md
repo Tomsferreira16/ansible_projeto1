@@ -86,7 +86,6 @@ ansible_projeto1/
 
 ## Screenshots
 
-Include screenshots of your application here to give users a visual overview of the GUI.
 
 ## Contributing
 
