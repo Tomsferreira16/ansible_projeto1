@@ -1,6 +1,6 @@
 # Suricata & Ansible Management
 
-This project provides a graphical user interface (GUI) for managing Suricata and Ansible configurations. The application is built using Python's Tkinter library and integrates with Ansible playbooks to perform various tasks such as installing Suricata, managing inventory, viewing logs, and handling custom rules.
+This project provides a graphical interface (GUI) for managing Suricata and Ansible configurations. Built using Python's Tkinter library, the application integrates with Ansible playbooks to automate key tasks such as Suricata installation, inventory management, log monitoring, and custom rule handling. The project was developed as part of a university assignment for the Networks and Systems Administration course at Instituto Politécnico de Viana do Castelo. It is supervised by Assistant Guest Prof. Silvestre Malta (PhD) under the subject "Projeto 1."
 
 ## Table of Contents
 
@@ -18,7 +18,7 @@ This project provides a graphical user interface (GUI) for managing Suricata and
 
 - **Inventory Management**: Add, load, and delete servers from the inventory.
 - **Install Suricata**: Install and configure Suricata on remote servers.
-- **View Suricata Logs**: View and export Suricata logs.
+- **View Suricata Logs**: View and export Suricata logs as a txt.
 - **Custom Rules Management**: Add, view, and delete custom Suricata rules.
 - **Analyze Logs**: Load and filter log files by IP, date, and protocol.
 
