@@ -12,7 +12,7 @@ inventory_file = os.path.expanduser("~/ansible_projeto1/inventory")
 class SuricataAnsibleGUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("Suricata & Ansible Management")
+        self.root.title("SAM - Suricata & Ansible Management")
 
         # Creating the Notebook for tabs
         self.notebook = ttk.Notebook(root)
