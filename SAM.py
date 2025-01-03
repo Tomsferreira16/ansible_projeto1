@@ -809,7 +809,7 @@ class AnalyzeLogs:
     # Function to sort logs
     def sort_logs(self, ascending=True):
         try:
-            self.filtered_logs.sort(key=lambda log: datetime.strptime(log.split()[0], "%m/%d/%Y"), reverse=not ascending)
+            self.filtered_logs.sort(key=lambda log: datetime.strptime(log.split()[0], "%m/%d/%Y-%H:%M:%S.%f"), reverse=not ascending)
             self.display_logs(self.filtered_logs)
         except ValueError:
             messagebox.showerror("Error", "Failed to sort logs. Ensure logs have valid date format.")
