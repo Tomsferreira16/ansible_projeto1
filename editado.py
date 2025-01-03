@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import subprocess
 import os
+import re
 
 
 
@@ -265,11 +266,10 @@ class SuricataAnsibleGUI:
 
             # Step 3: Add the private key to the SSH agent
             subprocess.run(["eval", "$(ssh-agent -s)"], check=True, shell=True)  # Start the SSH agent
-            subprocess.run("eval $(ssh-agent -s)", check=True, shell=True)  # Start the SSH agent
+            subprocess.run(["ssh-add", f"{ssh_dir}{key_name}"], check=True)  # Add the private key to the agent
 
             # Step 4: Create an alias for the ssh-agent setup and add it to .bashrc for persistence
             alias_command = "alias ssha='eval $(ssh-agent) && ssh-add'"
-            alias_command = "alias ssha='eval $(ssh-agent -s) && ssh-add'"
             with open(os.path.expanduser("~/.bashrc"), "a") as bashrc_file:
                 bashrc_file.write(f"\n{alias_command}\n")
 
@@ -360,7 +360,7 @@ class SuricataAnsibleGUI:
 
         try:
             # Run the full command instead of alias
-            subprocess.run(f"eval $(ssh-agent -s) && ssh-add {private_key_path}", check=True, shell=True)
+            subprocess.run(f"eval $(ssh-agent) && ssh-add {private_key_path}", check=True, shell=True)
 
             # Inform the user of success
             messagebox.showinfo("Success", f"SSH key {private_key_path} added to the agent successfully.")
@@ -454,7 +454,7 @@ class SuricataAnsibleGUI:
         interface = self.interface_entry.get()
 
         if interface:
-            subprocess.run(["ansible-playbook", "change_interface.yml", "-e", f"interface={interface}"], check=True)
+            # Run the change_interface.yml playbook with the selected interface as a variable
             subprocess.run(["ansible-playbook", "change_interface.yml", "-e", f"interface={interface}"])
         else:
             print("Please enter a valid interface.")
@@ -472,7 +472,7 @@ class SuricataAnsibleGUI:
                     "ansible-playbook", 
                     "-i", self.inventory_file, 
                     playbook_path, 
-                    '--extra-vars="log_path=/var/log/suricata/fast.log"'
+                    "--extra-vars", "log_path=/var/log/suricata/fast.log"
                 ],
                 capture_output=True,
                 text=True,
@@ -558,7 +558,7 @@ class SuricataAnsibleGUI:
             subprocess.run([
                 "ansible-playbook", "-i", self.inventory_file, "add_custom_rule.yml", 
                 "--extra-vars", f"action={action} protocol={protocol} src_ip={src_ip} src_port={src_port} "
-                                f"dst_ip={dst_ip} dst_port={dst_port} msg={msg} sid={sid} custom_rule='{rule}'\""
+                                f"dst_ip={dst_ip} dst_port={dst_port} msg={msg} sid={sid} custom_rule='{rule}'"
             ], check=True)
 
             # Display success message
@@ -608,7 +608,7 @@ class SuricataAnsibleGUI:
         try:
             subprocess.run([
                 "ansible-playbook", "-i", self.inventory_file, "delete_custom_rule.yml", 
-                "--extra-vars", f"custom_rule=\"{custom_rule_to_delete}\""
+                "--extra-vars", f"custom_rule='{custom_rule_to_delete}'"
             ], check=True)
 
             # Display success message
