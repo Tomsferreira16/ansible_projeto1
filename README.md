@@ -96,7 +96,7 @@ Contributions are welcome! Please fork the repository and submit a pull request.
 
 MIT License
 
-Copyright (c) 2023 Tomás Ferreira
+Copyright (c) 2025 Tomás Ferreira
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
