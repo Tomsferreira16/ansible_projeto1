@@ -537,20 +537,24 @@ class CustomRules:
         self.save_rule_button = tk.Button(self.rules_frame, text="Save Rule", command=self.save_custom_rule)
         self.save_rule_button.grid(row=7, columnspan=2, pady=10, sticky="ew")
 
+        # View Custom Rules Button
+        self.view_rules_button = tk.Button(self.rules_frame, text="View Custom Rules", command=self.view_custom_rules)
+        self.view_rules_button.grid(row=8, columnspan=2, pady=10, sticky="ew")
+
         # Custom Rules Text Box
         self.custom_rules_text = tk.Text(self.rules_frame, height=15, width=60)
-        self.custom_rules_text.grid(row=8, columnspan=2, padx=5, pady=5, sticky="nsew")
+        self.custom_rules_text.grid(row=9, columnspan=2, padx=5, pady=5, sticky="nsew")
 
         # Delete Rule Entry
         self.delete_rule_entry = tk.Entry(self.rules_frame)
-        self.delete_rule_entry.grid(row=9, column=0, padx=5, pady=5, sticky="ew")
+        self.delete_rule_entry.grid(row=10, column=0, padx=5, pady=5, sticky="ew")
 
         # Delete Rule Button
         self.delete_rule_button = tk.Button(self.rules_frame, text="Delete Rule", command=self.delete_custom_rules)
-        self.delete_rule_button.grid(row=9, column=1, padx=5, pady=5, sticky="ew")
+        self.delete_rule_button.grid(row=10, column=1, padx=5, pady=5, sticky="ew")
 
         # Ensure the custom rules text box expands with the window
-        self.rules_frame.grid_rowconfigure(8, weight=1)
+        self.rules_frame.grid_rowconfigure(9, weight=1)
         self.rules_frame.grid_columnconfigure(0, weight=1)
         self.rules_frame.grid_columnconfigure(1, weight=3)
 
