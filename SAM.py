@@ -403,7 +403,7 @@ class SuricataLogs:
 
     def view_logs(self):
         # Path to your playbook
-        playbook_path = "/home/tomas/ansible_projeto1/read_log.yml"  # Update this path if necessary
+        playbook_path = os.path.expanduser("~/ansible_projeto1/read_log.yml")
 
         try:
             # Run the Ansible playbook and capture the output
@@ -475,9 +475,11 @@ class SuricataLogs:
         # Check if there is any log content
         if log_content:
             try:
-                with open("/home/tomas/ansible_projeto1/suricata_logs.txt", "w") as txt_file:
+                # Use the expanded home directory path
+                export_path = os.path.expanduser("~/ansible_projeto1/suricata_logs.txt")
+                with open(export_path, "w") as txt_file:
                     txt_file.write(log_content)
-                messagebox.showinfo("Success", "Logs exported to TXT successfully.")
+                messagebox.showinfo("Success", f"Logs exported to TXT successfully at {export_path}.")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to export logs to TXT: {e}")
         else:
