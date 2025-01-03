@@ -2,6 +2,18 @@
 
 This project provides a graphical user interface (GUI) for managing Suricata and Ansible configurations. The application is built using Python's Tkinter library and integrates with Ansible playbooks to perform various tasks such as installing Suricata, managing inventory, viewing logs, and handling custom rules.
 
+## Table of Contents
+
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Ansible Playbooks](#ansible-playbooks)
+- [File Structure](#file-structure)
+- [Screenshots](#screenshots)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Features
 
 - **Inventory Management**: Add, load, and delete servers from the inventory.
@@ -37,7 +49,12 @@ This project provides a graphical user interface (GUI) for managing Suricata and
     python SAM.py
     ```
 
-2. Use the GUI to manage your Suricata and Ansible configurations.
+2. Use the GUI to manage your Suricata and Ansible configurations:
+    - **Inventory Tab**: Add, load, and delete servers.
+    - **Install Suricata Tab**: Install Suricata on remote servers.
+    - **Suricata Logs Tab**: View and export Suricata logs.
+    - **Custom Rules Tab**: Add, view, and delete custom Suricata rules.
+    - **Analyze Logs Tab**: Load and filter log files.
 
 ## Ansible Playbooks
 
@@ -66,6 +83,15 @@ ansible_projeto1/
 ├── change_interface.yml
 └── README.md
 ```
+
+## Screenshots
+
+Include screenshots of your application here to give users a visual overview of the GUI.
+
+## Contributing
+
+Contributions are welcome! Please fork the repository and submit a pull request.
+
 ## License
 
 MIT License
