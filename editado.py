@@ -497,7 +497,7 @@ class SuricataAnsibleGUI:
                 extra_vars["log_ip"] = log_ip
 
             # Construct extra_vars string
-            extra_vars_str = " ".join([f"{key}={value}" for key, value in extra_vars.items()])
+            extra_vars_str = " ".join([f"{key}='{value}'" for key, value in extra_vars.items()])
 
             # Run the Ansible playbook with filtering criteria
             result = subprocess.run(

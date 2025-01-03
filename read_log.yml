@@ -1,7 +1,9 @@
----
 - name: Read and filter Suricata fast.log file
   hosts: all
   become: true
+  vars:
+    log_date: "{{ log_date | default('') }}"
+    log_ip: "{{ log_ip | default('') }}"
   tasks:
     - name: Check if fast.log exists
       stat:
@@ -10,21 +12,14 @@
 
     - name: Filter fast.log by date or IP
       shell: |
-        if [[ -n "{{ log_date }}" ]]; then
-          grep "{{ log_date }}" /var/log/suricata/fast.log
-        elif [[ -n "{{ log_ip }}" ]]; then
-          grep "{{ log_ip }}" /var/log/suricata/fast.log
-        else
-          cat /var/log/suricata/fast.log
-        fi
+        grep "{{ log_date }}" /var/log/suricata/fast.log {% if log_ip != '' %} | grep "{{ log_ip }}" {% endif %}
       when: fast_log_stat.stat.exists
       register: filtered_logs
-      changed_when: false
 
-    - name: Output filtered fast.log content
+    - name: Output filtered logs
       debug:
         msg: |
-          Filtered Log Content:
+          Filtered Logs:
           {{ filtered_logs.stdout }}
       when: fast_log_stat.stat.exists
 
