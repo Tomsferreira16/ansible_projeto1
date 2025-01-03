@@ -5,12 +5,16 @@
     log_date: "{{ log_date | default('') }}"
     log_ip: "{{ log_ip | default('') }}"
   tasks:
+    - name: Debug log_date and log_ip
+      debug:
+        msg: "log_date: {{ log_date }}, log_ip: {{ log_ip }}"
+
     - name: Check if fast.log exists
       stat:
         path: /var/log/suricata/fast.log
       register: fast_log_stat
 
-    - name: Filter fast.log by date or IP
+    - name: Filter fast.log by date and IP
       shell: |
         grep "{{ log_date }}" /var/log/suricata/fast.log {% if log_ip != '' %} | grep "{{ log_ip }}" {% endif %}
       when: fast_log_stat.stat.exists
