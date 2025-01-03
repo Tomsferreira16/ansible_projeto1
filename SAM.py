@@ -786,7 +786,7 @@ class AnalyzeLogs:
         # Extract the date from the log string (assuming the date format is MM/DD/YYYY)
         date_str = log.split()[0]  # The date is at the start of the log line
         try:
-            log_date_obj = datetime.strptime(date_str, "%m/%d/%Y")
+            log_date_obj = datetime.strptime(date_str, "%m/%d/%Y-%H:%M:%S.%f")
             return log_date_obj.date() == date_obj.date()
         except ValueError:
             return False
