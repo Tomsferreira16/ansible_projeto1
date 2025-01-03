@@ -1,6 +1,6 @@
 # Suricata & Ansible Management
 
-This project provides a graphical user interface (GUI) for managing Suricata and Ansible configurations. The application is built using Python's Tkinter library and integrates with Ansible playbooks to perform various tasks such as installing Suricata, managing inventory, viewing logs, and handling custom rules.
+This project provides a graphical interface (GUI) for managing Suricata and Ansible configurations. Built using Python's Tkinter library, the application integrates with Ansible playbooks to automate key tasks such as Suricata installation, inventory management, log monitoring, and custom rule handling. The project was developed as part of a university assignment for the Networks and Systems Administration course at Instituto Politécnico de Viana do Castelo. It was supervised by Assistant Guest Prof. Silvestre Malta (PhD) under the subject "Projeto 1."
 
 ## Table of Contents
 
@@ -18,7 +18,7 @@ This project provides a graphical user interface (GUI) for managing Suricata and
 
 - **Inventory Management**: Add, load, and delete servers from the inventory.
 - **Install Suricata**: Install and configure Suricata on remote servers.
-- **View Suricata Logs**: View and export Suricata logs.
+- **View Suricata Logs**: View and export Suricata logs as a txt.
 - **Custom Rules Management**: Add, view, and delete custom Suricata rules.
 - **Analyze Logs**: Load and filter log files by IP, date, and protocol.
 
@@ -87,6 +87,17 @@ ansible_projeto1/
 
 ## Screenshots
 
+![setup_tab](https://github.com/user-attachments/assets/fd72c495-8c37-4ba6-a3a5-df1e64f03fcf)
+
+![inventory_tab](https://github.com/user-attachments/assets/6f44c25c-1d62-4bed-aa42-5ca497bc65d8)
+
+![install_suricata_tab](https://github.com/user-attachments/assets/6e1eb128-4564-41ea-90d9-5dc2bf04f55e)
+
+![suricata_logs_tab](https://github.com/user-attachments/assets/3bcb0996-a375-4738-8dcd-58994a75bafc)
+
+![custom_rules_tab](https://github.com/user-attachments/assets/67dba868-b89a-4236-9a87-ca4ec306d3b8)
+
+![analyze_logs_tab](https://github.com/user-attachments/assets/5efd0ead-6f5b-4bb9-bc17-b72e6ec8986d)
 
 ## Contributing
 
