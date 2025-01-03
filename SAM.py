@@ -128,13 +128,13 @@ class SetupTab:
                 subprocess.run(["ssh-copy-id", "-i", f"{ssh_dir}{key_name}.pub", ip], check=True)
 
             # Step 3: Add the private key to the SSH agent
-            subprocess.run(["eval", "$(ssh-agent -s)"], check=True, shell=True)  # Start the SSH agent
-            subprocess.run(["ssh-add", f"{ssh_dir}{key_name}"], check=True)  # Add the private key to the agent
+            # Start the SSH agent if not already running
+            ssh_agent_output = subprocess.run(["pgrep", "ssh-agent"], capture_output=True, text=True)
+            if not ssh_agent_output.stdout.strip():
+                subprocess.run(["ssh-agent", "-s"], check=True, shell=True)  # Start the SSH agent
 
-            # Step 4: Create an alias for the ssh-agent setup and add it to .bashrc for persistence
-            alias_command = "alias ssha='eval $(ssh-agent) && ssh-add'"
-            with open(os.path.expanduser("~/.bashrc"), "a") as bashrc_file:
-                bashrc_file.write(f"\n{alias_command}\n")
+            # Add the private key to the SSH agent
+            subprocess.run(["ssh-add", f"{ssh_dir}{key_name}"], check=True)  # Add the private key to the agent
 
             # Inform the user of success
             messagebox.showinfo("Success", "SSH Key copied to servers and SSH agent configured.")
