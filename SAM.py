@@ -27,6 +27,7 @@ class SuricataAnsibleGUI:
         self.analyze_logs_tab = AnalyzeLogs(self)
 
 class SetupTab:
+    #GUI for the Setup Tab
     def __init__(self, gui):
         self.gui = gui
         self.inventory_file = inventory_file
@@ -88,7 +89,8 @@ class SetupTab:
 
         self.ls_button = tk.Button(self.setup_frame, text="List SSH keys", command=self.list_directory)
         self.ls_button.grid(row=8, columnspan=2, pady=10, sticky="ew")
-
+    
+    #Function to create and copy SSH key to remote server
     def create_and_copy_key(self):
         key_name = self.key_name_entry.get()
         comment = self.comment_entry.get()
@@ -140,7 +142,8 @@ class SetupTab:
             messagebox.showerror("Error", f"An error occurred: {e}")
         except IOError as e:
             messagebox.showerror("Error", f"An error occurred when writing to .bashrc: {e}")
-
+    
+    #Function to list SSH keys on remote server
     def list_directory(self):
         # Get the SSH key path from the input field and expand '~' to full path
         remote_key_path = os.path.expanduser(self.remote_key_path_entry.get())
@@ -196,7 +199,8 @@ class SetupTab:
         except Exception as e:
             self.ls_textbox.delete("1.0", tk.END)
             self.ls_textbox.insert(tk.END, f"Exception: {str(e)}")
-
+    
+    #Function to add SSH identity, its necessary to comunicate with the remote server without password everytime we reboot the machine
     def add_ssh_identity(self):
         private_key_path = self.private_key_entry.get()  # Get private key path from input field
 
@@ -225,6 +229,7 @@ class SetupTab:
             messagebox.showerror("Error", f"An error occurred: {e}")
 
 class InventoryTab:
+    #GUI for the Inventory Tab
     def __init__(self, gui):
         self.gui = gui
         self.inventory_file = inventory_file
@@ -267,6 +272,7 @@ class InventoryTab:
         self.inventory_frame.grid_columnconfigure(0, weight=1)
         self.inventory_frame.grid_columnconfigure(1, weight=3)
 
+    #Function to save server in the inventory file
     def save_server(self):
         # Get the input values
         ip = self.inventory_ip_entry.get()
@@ -291,6 +297,7 @@ class InventoryTab:
         except IOError as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
 
+    #Function to load inventory file
     def load_inventory(self):
         try:
             # Read the inventory file and display its contents in the text widget
@@ -301,7 +308,8 @@ class InventoryTab:
             self.inventory_text.insert(tk.END, inventory)  # Insert the new content
         except IOError as e:
             messagebox.showerror("Error", f"An error occurred while reading the inventory file: {e}")
-
+    
+    #Function to delete server from inventory file
     def delete_server(self):
         try:
             # Get the IP address to delete
@@ -327,6 +335,7 @@ class InventoryTab:
             messagebox.showerror("Error", f"An error occurred: {e}")
 
 class InstallSuricata:
+    #GUI for the Install Suricata Tab
     def __init__(self, gui):
         self.gui = gui
         self.inventory_file = inventory_file
@@ -353,6 +362,7 @@ class InstallSuricata:
         self.install_frame.grid_columnconfigure(0, weight=1)
         self.install_frame.grid_columnconfigure(1, weight=2)
 
+    #Function to install Suricata
     def install_suricata(self):
         # Executes the Ansible playbook to install and configure Suricata 
         try:
@@ -366,7 +376,8 @@ class InstallSuricata:
         except subprocess.CalledProcessError as e:
             # Handle error
             messagebox.showerror("Error", f"An error occurred while running the playbook: {e}")
-
+    
+    #Function to change interface in the suricata.yaml file under /etc/suricata/suricata.yaml, it changes every "interface:" on the file
     def change_interface(self):
         # Get the interface from the entry field
         interface = self.interface_entry.get()
@@ -378,6 +389,7 @@ class InstallSuricata:
             messagebox.showerror("Error", f"An error occurred: {e}")
 
 class SuricataLogs:
+    #GUI for the Suricata Logs Tab
     def __init__(self, gui):
         self.gui = gui
         self.inventory_file = inventory_file
@@ -401,6 +413,7 @@ class SuricataLogs:
         self.logs_frame.grid_columnconfigure(0, weight=1)
         self.logs_frame.grid_columnconfigure(1, weight=3)
 
+    #Function to view Suricata logs using an Ansible playbook
     def view_logs(self):
         # Path to your playbook
         playbook_path = os.path.expanduser("~/ansible_projeto1/read_log.yml")
@@ -438,6 +451,7 @@ class SuricataLogs:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to view Suricata logs: {e}")
 
+    #Function to extract log content from the playbook output and filter it
     def extract_log_content(self, playbook_output):
         # Extract log content: We assume the log entries begin after the "msg" field
         # and end at the last log entry (matching the log format).
@@ -467,7 +481,8 @@ class SuricataLogs:
 
         else:
             return "No log content found."  # In case no log content is found
-        
+
+    #Function to export logs to a TXT file so later we can analyze it  
     def export_logs_to_txt(self):
         # Get the log content from the text widget
         log_content = self.log_text.get(1.0, tk.END).strip()
@@ -486,6 +501,7 @@ class SuricataLogs:
             messagebox.showwarning("Warning", "No log content to export.")
 
 class CustomRules:
+    #GUI for the Custom Rules Tab
     def __init__(self, gui):
         self.gui = gui
         self.inventory_file = inventory_file
@@ -535,31 +551,38 @@ class CustomRules:
         self.msg_entry = tk.Entry(self.rules_frame)
         self.msg_entry.grid(row=6, column=1, padx=5, pady=5, sticky="ew")
 
+        # SID
+        self.sid_label = tk.Label(self.rules_frame, text="SID:")
+        self.sid_label.grid(row=7, column=0, padx=5, pady=5, sticky="w")
+        self.sid_entry = tk.Entry(self.rules_frame)
+        self.sid_entry.grid(row=7, column=1, padx=5, pady=5, sticky="ew")
+
         # Save Rule Button
         self.save_rule_button = tk.Button(self.rules_frame, text="Save Rule", command=self.save_custom_rule)
-        self.save_rule_button.grid(row=7, columnspan=2, pady=10, sticky="ew")
+        self.save_rule_button.grid(row=8, columnspan=2, pady=10, sticky="ew")
 
         # View Custom Rules Button
         self.view_rules_button = tk.Button(self.rules_frame, text="View Custom Rules", command=self.view_custom_rules)
-        self.view_rules_button.grid(row=8, columnspan=2, pady=10, sticky="ew")
+        self.view_rules_button.grid(row=9, columnspan=2, pady=10, sticky="ew")
 
         # Custom Rules Text Box
         self.custom_rules_text = tk.Text(self.rules_frame, height=15, width=60)
-        self.custom_rules_text.grid(row=9, columnspan=2, padx=5, pady=5, sticky="nsew")
+        self.custom_rules_text.grid(row=10, columnspan=2, padx=5, pady=5, sticky="nsew")
 
         # Delete Rule Entry
         self.delete_rule_entry = tk.Entry(self.rules_frame)
-        self.delete_rule_entry.grid(row=10, column=0, padx=5, pady=5, sticky="ew")
+        self.delete_rule_entry.grid(row=11, column=0, padx=5, pady=5, sticky="ew")
 
         # Delete Rule Button
         self.delete_rule_button = tk.Button(self.rules_frame, text="Delete Rule", command=self.delete_custom_rules)
-        self.delete_rule_button.grid(row=10, column=1, padx=5, pady=5, sticky="ew")
+        self.delete_rule_button.grid(row=11, column=1, padx=5, pady=5, sticky="ew")
 
         # Ensure the custom rules text box expands with the window
-        self.rules_frame.grid_rowconfigure(9, weight=1)
+        self.rules_frame.grid_rowconfigure(10, weight=1)
         self.rules_frame.grid_columnconfigure(0, weight=1)
         self.rules_frame.grid_columnconfigure(1, weight=3)
 
+    #Function to save custom rules
     def save_custom_rule(self):
         action = self.action_var.get()
         protocol = self.protocol_entry.get()
@@ -568,9 +591,9 @@ class CustomRules:
         dst_ip = self.dst_ip_entry.get()
         dst_port = self.dst_port_entry.get()
         msg = self.msg_entry.get()
-        sid = 1000001  # Example SID, you should generate or manage SIDs properly
+        sid = self.sid_entry.get()
 
-        if not action or not protocol or not src_ip or not src_port or not dst_ip or not dst_port or not msg:
+        if not action or not protocol or not src_ip or not src_port or not dst_ip or not dst_port or not msg or not sid:
             messagebox.showerror("Error", "All fields must be filled out.")
             return
 
@@ -639,10 +662,12 @@ class CustomRules:
             messagebox.showerror("Error", f"An error occurred: {e}")
 
 class AnalyzeLogs:
+    # GUI for the Analyze Logs Tab
     def __init__(self, gui):
         self.gui = gui
         self.logs = []
         self.filtered_logs = []
+        self.active_filters = {}
         self.analyze_frame = ttk.Frame(gui.notebook, padding="10")
         gui.notebook.add(self.analyze_frame, text="Analyze Logs")
 
@@ -667,15 +692,29 @@ class AnalyzeLogs:
         self.clear_button = tk.Button(self.analyze_frame, text="Clear Filters", command=self.clear_filters)
         self.clear_button.grid(row=2, column=3, padx=10, pady=5, sticky="ew")
 
+        # Sort buttons
+        self.sort_asc_button = tk.Button(self.analyze_frame, text="Sort Ascending", command=lambda: self.sort_logs(ascending=True))
+        self.sort_asc_button.grid(row=3, column=0, padx=10, pady=5, sticky="ew")
+
+        self.sort_desc_button = tk.Button(self.analyze_frame, text="Sort Descending", command=lambda: self.sort_logs(ascending=False))
+        self.sort_desc_button.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
+
+        # Label to display active filters
+        self.active_filters_label = tk.Label(self.analyze_frame, text="Active Filters: None")
+        self.active_filters_label.grid(row=4, column=0, columnspan=4, padx=10, pady=5, sticky="ew")
+
         # Configure rows and columns to expand with the window
         self.analyze_frame.grid_rowconfigure(0, weight=1)  # Make text widget expand
         self.analyze_frame.grid_rowconfigure(1, weight=0)
         self.analyze_frame.grid_rowconfigure(2, weight=0)
+        self.analyze_frame.grid_rowconfigure(3, weight=0)
+        self.analyze_frame.grid_rowconfigure(4, weight=0)
         self.analyze_frame.grid_columnconfigure(0, weight=1)
         self.analyze_frame.grid_columnconfigure(1, weight=1)
         self.analyze_frame.grid_columnconfigure(2, weight=1)
         self.analyze_frame.grid_columnconfigure(3, weight=1)
 
+    # Function to load log file
     def load_log_file(self):
         # Open file dialog to load the .txt log file
         file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt")])
@@ -690,6 +729,7 @@ class AnalyzeLogs:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load log file: {e}")
 
+    # Function to display logs
     def display_logs(self, logs):
         self.log_text.delete(1.0, tk.END)  # Clear the text box
         if logs:
@@ -697,35 +737,51 @@ class AnalyzeLogs:
         else:
             self.log_text.insert(tk.END, "No logs to display.")
 
+    # Function to filter logs by IP
     def filter_by_ip(self):
         ip = self.get_input("Enter IP Address to Filter by:")
         if ip:
-            filtered_logs = [log for log in self.logs if ip in log]
-            self.filtered_logs = filtered_logs
-            self.display_logs(self.filtered_logs)
+            self.active_filters['ip'] = ip
+            self.apply_filters()
 
+    # Function to filter logs by date
     def filter_by_date(self):
         date_str = self.get_input("Enter Date (MM/DD/YYYY) to Filter by:")
         try:
             # Validate the date format
             date_obj = datetime.strptime(date_str, "%m/%d/%Y")
-            filtered_logs = [log for log in self.logs if self.match_date(log, date_obj)]
-            self.filtered_logs = filtered_logs
-            self.display_logs(self.filtered_logs)
+            self.active_filters['date'] = date_obj
+            self.apply_filters()
         except ValueError:
             messagebox.showerror("Error", "Invalid date format. Please use MM/DD/YYYY.")
 
+    # Function to filter logs by protocol
     def filter_by_protocol(self):
         protocol = self.get_input("Enter Protocol to Filter by:")
         if protocol:
-            filtered_logs = [log for log in self.logs if protocol.lower() in log.lower()]
-            self.filtered_logs = filtered_logs
-            self.display_logs(self.filtered_logs)
+            self.active_filters['protocol'] = protocol
+            self.apply_filters()
 
+    # Function to apply all active filters
+    def apply_filters(self):
+        filtered_logs = self.logs
+        if 'ip' in self.active_filters:
+            filtered_logs = [log for log in filtered_logs if self.active_filters['ip'] in log]
+        if 'date' in self.active_filters:
+            filtered_logs = [log for log in filtered_logs if self.match_date(log, self.active_filters['date'])]
+        if 'protocol' in self.active_filters:
+            filtered_logs = [log for log in filtered_logs if self.active_filters['protocol'].lower() in log.lower()]
+
+        self.filtered_logs = filtered_logs
+        self.display_logs(self.filtered_logs)
+        self.update_active_filters_label()
+
+    # Function to get input from user
     def get_input(self, prompt):
         input_dialog = tk.simpledialog.askstring("Input", prompt)
         return input_dialog.strip() if input_dialog else None
 
+    # Function to match the date in the log line
     def match_date(self, log, date_obj):
         # Extract the date from the log string (assuming the date format is MM/DD/YYYY)
         date_str = log.split()[0]  # The date is at the start of the log line
@@ -735,9 +791,28 @@ class AnalyzeLogs:
         except ValueError:
             return False
 
+    # Function to clear filters
     def clear_filters(self):
+        self.active_filters = {}
         self.filtered_logs = self.logs  # Reset to all logs
         self.display_logs(self.filtered_logs)
+        self.update_active_filters_label()
+
+    # Function to update the active filters label
+    def update_active_filters_label(self):
+        if self.active_filters:
+            filters_text = ", ".join([f"{key}: {value}" for key, value in self.active_filters.items()])
+            self.active_filters_label.config(text=f"Active Filters: {filters_text}")
+        else:
+            self.active_filters_label.config(text="Active Filters: None")
+
+    # Function to sort logs
+    def sort_logs(self, ascending=True):
+        try:
+            self.filtered_logs.sort(key=lambda log: datetime.strptime(log.split()[0], "%m/%d/%Y"), reverse=not ascending)
+            self.display_logs(self.filtered_logs)
+        except ValueError:
+            messagebox.showerror("Error", "Failed to sort logs. Ensure logs have valid date format.")
 
 # ---------------------- Main Program ----------------------
 if __name__ == "__main__":
