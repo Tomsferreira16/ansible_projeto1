@@ -50,6 +50,7 @@ This project provides a graphical user interface (GUI) for managing Suricata and
     ```
 
 2. Use the GUI to manage your Suricata and Ansible configurations:
+    - **Setup Tab**: Generate and copy SSH keys to remote servers, and manage SSH identities.
     - **Inventory Tab**: Add, load, and delete servers.
     - **Install Suricata Tab**: Install Suricata on remote servers.
     - **Suricata Logs Tab**: View and export Suricata logs.
