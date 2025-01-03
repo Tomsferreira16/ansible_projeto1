@@ -86,6 +86,17 @@ ansible_projeto1/
 
 ## Screenshots
 
+![setup_tab](https://github.com/user-attachments/assets/fd72c495-8c37-4ba6-a3a5-df1e64f03fcf)
+
+![inventory_tab](https://github.com/user-attachments/assets/6f44c25c-1d62-4bed-aa42-5ca497bc65d8)
+
+![install_suricata_tab](https://github.com/user-attachments/assets/6e1eb128-4564-41ea-90d9-5dc2bf04f55e)
+
+![suricata_logs_tab](https://github.com/user-attachments/assets/3bcb0996-a375-4738-8dcd-58994a75bafc)
+
+![custom_rules_tab](https://github.com/user-attachments/assets/67dba868-b89a-4236-9a87-ca4ec306d3b8)
+
+![analyze_logs_tab](https://github.com/user-attachments/assets/5efd0ead-6f5b-4bb9-bc17-b72e6ec8986d)
 
 ## Contributing
 
