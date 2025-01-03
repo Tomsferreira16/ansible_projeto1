@@ -90,7 +90,7 @@ class SetupTab:
         self.ls_button = tk.Button(self.setup_frame, text="List SSH keys", command=self.list_directory)
         self.ls_button.grid(row=8, columnspan=2, pady=10, sticky="ew")
     
-    #Function to create and copy SSH key to remote server
+    # Function to create and copy SSH key to remote server
     def create_and_copy_key(self):
         key_name = self.key_name_entry.get()
         comment = self.comment_entry.get()
@@ -123,9 +123,21 @@ class SetupTab:
                 messagebox.showinfo("Info", f"Created new SSH key: {key_name}")
 
             # Step 2: Copy the public key to the remote servers
-            for ip in ips:
-                ip = ip.strip()  # Clean up the IP
-                subprocess.run(["ssh-copy-id", "-i", f"{ssh_dir}{key_name}.pub", ip], check=True)
+            with open(self.inventory_file, "r") as file:
+                inventory_lines = file.readlines()
+
+            for line in inventory_lines:
+                if line.strip():
+                    parts = line.split()
+                    ip = parts[0]
+                    user = None
+                    for part in parts[1:]:
+                        if part.startswith("ansible_user="):
+                            user = part.split("=")[1]
+                            break
+
+                    if user:
+                        subprocess.run(["ssh-copy-id", "-i", f"{ssh_dir}{key_name}.pub", f"{user}@{ip}"], check=True)
 
             # Step 3: Add the private key to the SSH agent
             # Start the SSH agent if not already running
