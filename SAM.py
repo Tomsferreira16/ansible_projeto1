@@ -137,9 +137,9 @@ class SetupTab:
             with open(os.path.expanduser("~/.bashrc"), "a") as bashrc_file:
                 bashrc_file.write(f"\n{alias_command}\n")
 
-            # Step 4: use the alias to start the ssh-agent and add the private key
-            subprocess.run(f"ssha {ssh_dir}{key_name}", check=True, shell=True)
-            
+            # Step 4: start the ssh-agent and add the private key
+            subprocess.run(f"eval $(ssh-agent) && ssh-add {ssh_dir}{key_name}", check=True, shell=True)
+
             # Inform the user of success
             messagebox.showinfo("Success", "SSH Key copied to servers and SSH agent configured.")
         except subprocess.CalledProcessError as e:
