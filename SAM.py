@@ -72,14 +72,14 @@ class SetupTab:
         self.private_key_entry.grid(row=4, column=1, padx=5, pady=5, sticky="ew")
 
         # Add SSH Identity
-        self.ssh_idd_add_button = tk.Button(self.setup_frame, text="Add SSH identity", command=self.add_ssh_identity)
-        self.ssh_idd_add_button.grid(row=5, columnspan=2, pady=10, sticky="ew")
-
         # Remote Key Path
         remote_key_path_label = tk.Label(self.setup_frame, text="Enter Remote SSH Key Path:")
-        remote_key_path_label.grid(row=6, column=0, sticky="w", padx=5, pady=5)
+        remote_key_path_label.grid(row=5, column=0, sticky="w", padx=5, pady=5)
         self.remote_key_path_entry = tk.Entry(self.setup_frame)
-        self.remote_key_path_entry.grid(row=6, column=1, padx=5, pady=5, sticky="ew")
+        self.remote_key_path_entry.grid(row=5, column=1, padx=5, pady=5, sticky="ew")
+
+        self.ssh_idd_add_button = tk.Button(self.setup_frame, text="Add SSH identity", command=self.add_ssh_identity)
+        self.ssh_idd_add_button.grid(row=6, columnspan=2, pady=10, sticky="ew")
 
         # SSH Keys on Remote Server
         self.ls_label = tk.Label(self.setup_frame, text="SSH Keys on the remote server:")
@@ -89,20 +89,30 @@ class SetupTab:
 
         self.ls_button = tk.Button(self.setup_frame, text="List SSH keys", command=self.list_directory)
         self.ls_button.grid(row=8, columnspan=2, pady=10, sticky="ew")
+
     # Function to create and copy SSH key to remote server
     def create_and_copy_key(self):
         key_name = self.key_name_entry.get()
         comment = self.comment_entry.get()
-        ips = self.setup_ip_entry.get()
+        # Read IPs and usernames from the inventory file
+        servers = []
+        with open(self.inventory_file, "r") as file:
+            for line in file:
+                if line.strip() and not line.startswith("#"):
+                    parts = line.split()
+                    ip = parts[0]
+                    user = None
+                    for part in parts[1:]:
+                        if part.startswith("ansible_user="):
+                            user = part.split("=")[1]
+                    servers.append((ip, user))
 
         # Debugging print to check the raw inputs
-        print(f"Key Name: {repr(key_name)}, Comment: {repr(comment)}, IPs: {repr(ips)}")
+        print(f"Key Name: {repr(key_name)}, Comment: {repr(comment)}, Servers: {repr(servers)}")
 
-        if not key_name or not comment or not ips:
+        if not key_name or not comment or not servers:
             messagebox.showerror("Error", "All fields must be filled out.")
             return
-
-        ips = ips.split(",")  # Split the IPs by comma
 
         try:
             # Get the expanded home directory path
@@ -122,14 +132,15 @@ class SetupTab:
                 messagebox.showinfo("Info", f"Created new SSH key: {key_name}")
 
             # Step 2: Copy the public key to the remote servers
-            for ip in ips:
-                subprocess.run(["ssh-copy-id", "-i", f"{ssh_dir}{key_name}.pub", ip.strip()], check=True)
+            for ip, user in servers:
+                target = f"{user}@{ip}" if user else ip
+                subprocess.run(["ssh-copy-id", "-i", f"{ssh_dir}{key_name}.pub", target.strip()], check=True)
 
             # Step 3: Add the private key to the SSH agent
             # Start the SSH agent if not already running
             ssh_agent_output = subprocess.run(["pgrep", "ssh-agent"], capture_output=True, text=True)
             if not ssh_agent_output.stdout.strip():
-                subprocess.run(["eval $(ssh-agent)"], check=True, shell=True)  # Start the SSH agent
+                subprocess.run(["ssh-agent"], check=True)  # Start the SSH agent
 
             # Add the private key to the SSH agent
             subprocess.run(["ssh-add", f"{ssh_dir}{key_name}"], check=True)  # Add the private key to the agent
@@ -149,7 +160,7 @@ class SetupTab:
             messagebox.showerror("Error", f"An error occurred: {e}")
         except IOError as e:
             messagebox.showerror("Error", f"An error occurred when writing to .bashrc: {e}")
-    
+            
     #Function to list SSH keys on remote server
     def list_directory(self):
         # Get the SSH key path from the input field and expand '~' to full path
