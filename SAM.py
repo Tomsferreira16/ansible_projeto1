@@ -134,7 +134,10 @@ class SetupTab:
 
             # Step 3: Add the private key to the SSH agent
             print("Starting SSH agent")
-            subprocess.run(["eval", "$(ssh-agent -s)"], check=True, shell=True)  # Start the SSH agent
+            result = subprocess.run("ssh-agent -s", shell=True, capture_output=True, text=True, executable="/bin/bash")
+            agent_output = result.stdout
+            agent_vars = dict(re.findall(r"(\S+)=([^;]+);", agent_output))
+            os.environ.update(agent_vars)
             print(f"Adding SSH key to agent: {key_name}")
             subprocess.run(["ssh-add", f"{ssh_dir}{key_name}"], check=True)  # Add the private key to the agent
 
