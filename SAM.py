@@ -128,7 +128,9 @@ class SetupTab:
             # Step 2: Copy the public key to the remote servers
             for ip in ips:
                 ip = ip.strip()  # Clean up the IP
-                subprocess.run(["ssh-copy-id", "-i", f"{ssh_dir}{key_name}.pub", ip], check=True)
+                command = ["ssh-copy-id", "-i", f"{ssh_dir}{key_name}.pub", ip]
+                print(f"Running command: {' '.join(command)}")  # Print the command being run
+                subprocess.run(command, check=True)
 
             # Step 3: Add the private key to the SSH agent
             subprocess.run(["eval", "$(ssh-agent -s)"], check=True, shell=True)  # Start the SSH agent
