@@ -119,6 +119,7 @@ class SetupTab:
                 messagebox.showinfo("Info", f"Using existing SSH key: {key_name}")
             else:
                 # If the key does not exist, generate a new one
+                print(f"Generating SSH key: {key_name}")
                 subprocess.run([
                     "ssh-keygen", "-t", "ed25519", "-f", f"{ssh_dir}{key_name}", "-C", comment, "-N", ""
                 ], check=True)
@@ -127,14 +128,18 @@ class SetupTab:
             # Step 2: Copy the public key to the remote servers
             for ip in ips:
                 ip = ip.strip()  # Clean up the IP
+                print(f"Copying SSH key to server: {ip}")
                 subprocess.run(["ssh-copy-id", "-i", f"{ssh_dir}{key_name}.pub", ip], check=True)
 
             # Step 3: Add the private key to the SSH agent
+            print("Starting SSH agent")
             subprocess.run(["eval", "$(ssh-agent -s)"], check=True, shell=True)  # Start the SSH agent
+            print(f"Adding SSH key to agent: {key_name}")
             subprocess.run(["ssh-add", f"{ssh_dir}{key_name}"], check=True)  # Add the private key to the agent
 
             # Step 4: Create an alias for the ssh-agent setup and add it to .bashrc for persistence
             alias_command = "alias ssha='eval $(ssh-agent) && ssh-add'"
+            print("Adding alias to .bashrc")
             with open(os.path.expanduser("~/.bashrc"), "a") as bashrc_file:
                 bashrc_file.write(f"\n{alias_command}\n")
 
