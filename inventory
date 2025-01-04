@@ -1,1 +1,1 @@
-192.168.0.203 ansible_user=tomas ansible_become_password=123
+192.168.1.203 ansible_user=tomas ansible_become_password=123
