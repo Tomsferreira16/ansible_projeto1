@@ -93,7 +93,7 @@ class SetupTab:
         self.ls_textbox = tk.Text(self.setup_frame, height=20, width=40)
         self.ls_textbox.grid(row=8, column=1, padx=5, pady=5, sticky="ew")
 
-    # Function to create and copy SSH key to remote server
+    # Function to create and copy SSH key to remote server, this part cant be run on background mode because it needs user input
     def create_and_copy_key(self):
         key_name = self.key_name_entry.get()
         comment = self.comment_entry.get()
@@ -133,7 +133,7 @@ class SetupTab:
                 subprocess.run(command, check=True)
 
             # Step 3: Add the private key to the SSH agent
-            subprocess.run(["eval", "$(ssh-agent -s)"], check=True, shell=True)  # Start the SSH agent
+            subprocess.run(["ssh-agent", "-s"], check=True, shell=True)  # Start the SSH agent
             subprocess.run(["ssh-add", f"{ssh_dir}{key_name}"], check=True)  # Add the private key to the agent
 
             # Step 4: Create an alias for the ssh-agent setup and add it to .bashrc for persistence
