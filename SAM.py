@@ -96,36 +96,56 @@ class SetupTab:
     def create_and_copy_key(self):
         key_name = self.key_name_entry.get()
         comment = self.comment_entry.get()
-        server_ips = self.server_ips_entry.get().split(',')
+        ips = self.server_ips_entry.get()
 
-        if not key_name or not comment or not server_ips:
+        # Debugging print to check the raw inputs
+        print(f"Key Name: '{key_name}', Comment: '{comment}', IPs: '{ips}'")
+
+        if not key_name or not comment or not ips:
             messagebox.showerror("Error", "All fields must be filled out.")
             return
 
-        key_path = os.path.expanduser(f"~/.ssh/{key_name}")
+        ips = ips.split(",")  # Split the IPs by comma
 
         try:
-            # Generate SSH key
-            subprocess.run(["ssh-keygen", "-t", "ed25519", "-C", comment, "-f", key_path, "-N", ""], check=True)
+            # Get the expanded home directory path
+            ssh_dir = os.path.expanduser("~/.ssh/")
 
-            # Copy public key to each server
-            for ip in server_ips:
-                ip = ip.strip()
-                subprocess.run(["ssh-copy-id", "-i", f"{key_path}.pub", ip], check=True)
+            # Check if the SSH key already exists
+            key_exists = os.path.isfile(f"{ssh_dir}{key_name}")  # Check if private key exists
 
-            # Add private key to ssh-agent
-            subprocess.run(["eval", "$(ssh-agent)"], shell=True, check=True)
-            subprocess.run(["ssh-add", key_path], check=True)
+            if key_exists:
+                # If the key exists, use it directly
+                messagebox.showinfo("Info", f"Using existing SSH key: {key_name}")
+            else:
+                # If the key does not exist, generate a new one
+                subprocess.run([
+                    "ssh-keygen", "-t", "ed25519", "-f", f"{ssh_dir}{key_name}", "-C", comment, "-N", ""
+                ], check=True)
+                messagebox.showinfo("Info", f"Created new SSH key: {key_name}")
 
-            # Add alias to .bashrc
-            with open(os.path.expanduser("~/.bashrc"), "a") as bashrc:
-                bashrc.write("\nalias ssha='eval $(ssh-agent) && ssh-add'\n")
+            # Step 2: Copy the public key to the remote servers
+            for ip in ips:
+                ip = ip.strip()  # Clean up the IP
+                subprocess.run(["ssh-copy-id", "-i", f"{ssh_dir}{key_name}.pub", ip], check=True)
 
-            messagebox.showinfo("Success", "SSH key created, copied to servers, and identity added.")
+            # Step 3: Add the private key to the SSH agent
+            subprocess.run(["eval", "$(ssh-agent -s)"], check=True, shell=True)  # Start the SSH agent
+            subprocess.run(["ssh-add", f"{ssh_dir}{key_name}"], check=True)  # Add the private key to the agent
+
+            # Step 4: Create an alias for the ssh-agent setup and add it to .bashrc for persistence
+            alias_command = "alias ssha='eval $(ssh-agent) && ssh-add'"
+            with open(os.path.expanduser("~/.bashrc"), "a") as bashrc_file:
+                bashrc_file.write(f"\n{alias_command}\n")
+
+            # Inform the user of success
+            messagebox.showinfo("Success", "SSH Key copied to servers and SSH agent configured.")
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
+        except IOError as e:
+            messagebox.showerror("Error", f"An error occurred when writing to .bashrc: {e}")
 
-      
+
         
     #Function to list SSH keys on remote server
     def list_directory(self):
