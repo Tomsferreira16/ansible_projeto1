@@ -132,8 +132,8 @@ class SetupTab:
                 print(f"Running command: {' '.join(command)}")  # Print the command being run
                 subprocess.run(command, check=True)
 
-            # Step 3: Add the private key to the SSH agent
-            subprocess.run(["ssh-agent", "-s"], check=True, shell=True)  # Start the SSH agent
+             # Step 3: Add the private key to the SSH agent
+            subprocess.run(["eval", "$(ssh-agent -s)"], check=True, shell=True)  # Start the SSH agent
             subprocess.run(["ssh-add", f"{ssh_dir}{key_name}"], check=True)  # Add the private key to the agent
 
             # Step 4: Create an alias for the ssh-agent setup and add it to .bashrc for persistence
