@@ -89,7 +89,6 @@ class SetupTab:
 
         self.ls_button = tk.Button(self.setup_frame, text="List SSH keys", command=self.list_directory)
         self.ls_button.grid(row=8, columnspan=2, pady=10, sticky="ew")
-    
     # Function to create and copy SSH key to remote server
     def create_and_copy_key(self):
         key_name = self.key_name_entry.get()
@@ -123,33 +122,29 @@ class SetupTab:
                 messagebox.showinfo("Info", f"Created new SSH key: {key_name}")
 
             # Step 2: Copy the public key to the remote servers
-            with open(self.inventory_file, "r") as file:
-                inventory_lines = file.readlines()
-
-            for line in inventory_lines:
-                if line.strip():
-                    parts = line.split()
-                    ip = parts[0]
-                    user = None
-                    for part in parts[1:]:
-                        if part.startswith("ansible_user="):
-                            user = part.split("=")[1]
-                            break
-
-                    if user:
-                        subprocess.run(["ssh-copy-id", "-i", f"{ssh_dir}{key_name}.pub", f"{user}@{ip}"], check=True)
+            for ip in ips:
+                subprocess.run(["ssh-copy-id", "-i", f"{ssh_dir}{key_name}.pub", ip.strip()], check=True)
 
             # Step 3: Add the private key to the SSH agent
             # Start the SSH agent if not already running
             ssh_agent_output = subprocess.run(["pgrep", "ssh-agent"], capture_output=True, text=True)
             if not ssh_agent_output.stdout.strip():
-                subprocess.run(["ssh-agent", "-s"], check=True, shell=True)  # Start the SSH agent
+                subprocess.run(["eval $(ssh-agent)"], check=True, shell=True)  # Start the SSH agent
 
             # Add the private key to the SSH agent
             subprocess.run(["ssh-add", f"{ssh_dir}{key_name}"], check=True)  # Add the private key to the agent
 
+            # Step 4: Add alias to .bashrc if not already present
+            bashrc_path = os.path.expanduser("~/.bashrc")
+            alias_command = "alias ssha='eval $(ssh-agent) && ssh-add'"
+            with open(bashrc_path, "r") as bashrc_file:
+                bashrc_content = bashrc_file.read()
+            if alias_command not in bashrc_content:
+                with open(bashrc_path, "a") as bashrc_file:
+                    bashrc_file.write(f"\n{alias_command}\n")
+
             # Inform the user of success
-            messagebox.showinfo("Success", "SSH Key copied to servers and SSH agent configured.")
+            messagebox.showinfo("Success", "SSH Key copied to servers, SSH agent configured, and alias added to .bashrc.")
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
         except IOError as e:
