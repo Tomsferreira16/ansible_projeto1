@@ -73,24 +73,25 @@ class SetupTab:
         self.private_key_entry = tk.Entry(self.setup_frame)
         self.private_key_entry.grid(row=4, column=1, padx=5, pady=5, sticky="ew")
 
-        # Add SSH Identity
+        # Add SSH Identity Button
+        self.ssh_idd_add_button = tk.Button(self.setup_frame, text="Add SSH identity", command=self.add_ssh_identity)
+        self.ssh_idd_add_button.grid(row=5, columnspan=2, pady=10, sticky="ew")
+
         # Remote Key Path
         remote_key_path_label = tk.Label(self.setup_frame, text="Enter Remote SSH Key Path:")
-        remote_key_path_label.grid(row=5, column=0, sticky="w", padx=5, pady=5)
+        remote_key_path_label.grid(row=6, column=0, sticky="w", padx=5, pady=5)
         self.remote_key_path_entry = tk.Entry(self.setup_frame)
-        self.remote_key_path_entry.grid(row=5, column=1, padx=5, pady=5, sticky="ew")
+        self.remote_key_path_entry.grid(row=6, column=1, padx=5, pady=5, sticky="ew")
 
-        self.ssh_idd_add_button = tk.Button(self.setup_frame, text="Add SSH identity", command=self.add_ssh_identity)
-        self.ssh_idd_add_button.grid(row=6, columnspan=2, pady=10, sticky="ew")
+        # List SSH Keys Button
+        self.ls_button = tk.Button(self.setup_frame, text="List Remote SSH keys", command=self.list_directory)
+        self.ls_button.grid(row=7, columnspan=2, pady=10, sticky="ew")
 
         # SSH Keys on Remote Server
         self.ls_label = tk.Label(self.setup_frame, text="SSH Keys on the remote server:")
-        self.ls_label.grid(row=7, column=0, sticky="w", padx=5, pady=5)
+        self.ls_label.grid(row=8, column=0, sticky="w", padx=5, pady=5)
         self.ls_textbox = tk.Text(self.setup_frame, height=20, width=40)
-        self.ls_textbox.grid(row=7, column=1, padx=5, pady=5, sticky="ew")
-
-        self.ls_button = tk.Button(self.setup_frame, text="List SSH keys", command=self.list_directory)
-        self.ls_button.grid(row=8, columnspan=2, pady=10, sticky="ew")
+        self.ls_textbox.grid(row=8, column=1, padx=5, pady=5, sticky="ew")
 
     # Function to create and copy SSH key to remote server
     def create_and_copy_key(self):
