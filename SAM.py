@@ -40,8 +40,10 @@ class SetupTab:
         self.setup_frame.grid_rowconfigure(1, weight=0)
         self.setup_frame.grid_rowconfigure(2, weight=0)
         self.setup_frame.grid_rowconfigure(3, weight=0)
-        self.setup_frame.grid_rowconfigure(4, weight=1)
+        self.setup_frame.grid_rowconfigure(4, weight=0)
         self.setup_frame.grid_rowconfigure(5, weight=0)
+        self.setup_frame.grid_rowconfigure(6, weight=1)
+        self.setup_frame.grid_rowconfigure(7, weight=0)
 
         # SSH Key Name
         self.key_name_label = tk.Label(self.setup_frame, text="SSH Key Name:")
@@ -54,6 +56,12 @@ class SetupTab:
         self.comment_label.grid(row=1, column=0, sticky="w", padx=5, pady=5)
         self.comment_entry = tk.Entry(self.setup_frame)
         self.comment_entry.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
+
+        # Server IPs
+        self.server_ips_label = tk.Label(self.setup_frame, text="Server IPs (comma separated):")
+        self.server_ips_label.grid(row=2, column=0, sticky="w", padx=5, pady=5)
+        self.server_ips_entry = tk.Entry(self.setup_frame)
+        self.server_ips_entry.grid(row=2, column=1, padx=5, pady=5, sticky="ew")
 
         # Create SSH Key Button
         self.create_key_button = tk.Button(self.setup_frame, text="Create & Copy Public SSH Key To Remote Server", command=self.create_and_copy_key)
@@ -88,51 +96,34 @@ class SetupTab:
     def create_and_copy_key(self):
         key_name = self.key_name_entry.get()
         comment = self.comment_entry.get()
+        server_ips = self.server_ips_entry.get().split(',')
 
-        if not key_name or not comment:
-            messagebox.showerror("Error", "SSH key name and comment must be provided.")
+        if not key_name or not comment or not server_ips:
+            messagebox.showerror("Error", "All fields must be filled out.")
             return
 
+        key_path = os.path.expanduser(f"~/.ssh/{key_name}")
+
         try:
-            # Define paths
-            ssh_dir = os.path.expanduser("~/.ssh/")
-            private_key_path = os.path.join(ssh_dir, key_name)
-            public_key_path = f"{private_key_path}.pub"
+            # Generate SSH key
+            subprocess.run(["ssh-keygen", "-t", "ed25519", "-C", comment, "-f", key_path, "-N", ""], check=True)
 
-            # Generate SSH key pair
-            subprocess.run([
-                "ssh-keygen", "-t", "ed25519", "-f", private_key_path, "-C", comment, "-N", ""
-            ], check=True)
+            # Copy public key to each server
+            for ip in server_ips:
+                ip = ip.strip()
+                subprocess.run(["ssh-copy-id", "-i", f"{key_path}.pub", ip], check=True)
 
-            # Read IPs from inventory file
-            with open(self.inventory_file, "r") as file:
-                ip_addresses = []
-                for line in file:
-                    if line.strip() and not line.startswith("#"):
-                        ip_addresses.append(line.split()[0])  # Extract the first element (IP)
+            # Add private key to ssh-agent
+            subprocess.run(["eval", "$(ssh-agent)"], shell=True, check=True)
+            subprocess.run(["ssh-add", key_path], check=True)
 
-            if not ip_addresses:
-                messagebox.showerror("Error", "No valid IP addresses found in inventory file.")
-                return
+            # Add alias to .bashrc
+            with open(os.path.expanduser("~/.bashrc"), "a") as bashrc:
+                bashrc.write("\nalias ssha='eval $(ssh-agent) && ssh-add'\n")
 
-            # Copy public key to all remote servers
-            for ip_address in ip_addresses:
-                subprocess.run(["ssh-copy-id", "-i", public_key_path, ip_address], check=True)
-
-            # Start SSH agent and add private key
-            subprocess.run(["ssh-agent", "-s"], check=True, shell=True)
-            subprocess.run(["ssh-add", private_key_path], check=True)
-
-            # Verify SSH access for the first IP
-            subprocess.run(["ssh", ip_addresses[0], "echo SSH connection successful"], check=True)
-
-            messagebox.showinfo("Success", "SSH key created and copied to remote servers successfully.")
-        except FileNotFoundError as e:
-            messagebox.showerror("Error", f"File not found: {e}")
+            messagebox.showinfo("Success", "SSH key created, copied to servers, and identity added.")
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
-        except Exception as e:
-            messagebox.showerror("Error", f"Unexpected error: {e}")
 
       
         
