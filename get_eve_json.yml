@@ -12,4 +12,5 @@
       fetch:
         src: /var/log/suricata/eve.json
         dest: ./
+        flat: yes
 
