@@ -679,6 +679,7 @@ class AnalyzeLogs:
         self.active_filters = {}
         self.analyze_frame = ttk.Frame(gui.notebook, padding="10")
         gui.notebook.add(self.analyze_frame, text="Analyze Fast Logs")
+        self.inventory_file = inventory_file
 
         # Create the text box to display log content
         self.log_text = tk.Text(self.analyze_frame, wrap=tk.WORD, height=15, width=80, font=("Helvetica", 12))
@@ -725,10 +726,18 @@ class AnalyzeLogs:
 
     # Function to load log file
     def load_log_file(self):
-        # Open file dialog to load the .txt log file
-        file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt")])
-        if not file_path:
+        # Run the Ansible playbook to fetch the fast.log file
+        try:
+            subprocess.run(
+                ["ansible-playbook", "-i", self.gui.inventory_file, "get_fast_log.yml"],
+                check=True
+            )
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"Failed to fetch log file: {e}")
             return
+
+        # Automatically load the fast.log file
+        file_path = os.path.expanduser("~/ansible_projeto1/fast.log")
 
         try:
             with open(file_path, "r") as file:
@@ -795,7 +804,7 @@ class AnalyzeLogs:
         # Extract the date from the log dictionary
         date_str = log.get('timestamp', '').split('T')[0]  # The date is at the start of the timestamp
         try:
-            log_date_obj = datetime.strptime(date_str, "%m/%d/%Y-%H:%M:%S.%f")
+            log_date_obj = datetime.strptime(date_str, "%Y-%m-%d")
             return log_date_obj.date() == date_obj.date()
         except ValueError:
             return False

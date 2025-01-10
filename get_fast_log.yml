@@ -1,0 +1,16 @@
+---
+- name: Fetch eve.json from remote server
+  hosts: all
+  tasks:
+    - name: Ensure destination directory exists
+      become: yes
+      file:
+        path: .
+        state: directory
+    - name: Fetch eve.json file
+      become: yes
+      fetch:
+        src: /var/log/suricata/eve.json
+        dest: ./
+        flat: yes
+
