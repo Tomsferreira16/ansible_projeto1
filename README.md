@@ -97,20 +97,27 @@ ansible_projeto1/
 
 ## Screenshots
 
-![setup_tab](https://github.com/user-attachments/assets/fd72c495-8c37-4ba6-a3a5-df1e64f03fcf)
-
-![inventory_tab](https://github.com/user-attachments/assets/6f44c25c-1d62-4bed-aa42-5ca497bc65d8)
-
-![install_suricata_tab](https://github.com/user-attachments/assets/6e1eb128-4564-41ea-90d9-5dc2bf04f55e)
-
-![suricata_logs_tab](https://github.com/user-attachments/assets/01a7882a-dfff-4d86-919e-42480afd8bbd)
-
-![custom_rules_tab](https://github.com/user-attachments/assets/67dba868-b89a-4236-9a87-ca4ec306d3b8)
-
-![analyze_fast_logs_tab](https://github.com/user-attachments/assets/ce5aea1a-673e-48b4-ad1b-7ecb422f703b)
+![setup_tab]![setup](https://github.com/user-attachments/assets/1285500f-c7c6-4c5c-ae58-ba2cf54d8e4a)
 
 
-![analyze_json_logs_Tab](https://github.com/user-attachments/assets/336df88a-0a4f-4cec-a88a-e982ee487fe4)
+![inventory_tab]![inventory](https://github.com/user-attachments/assets/9702c8e9-f7c4-4d34-90ea-465d77f9f07e)
+
+
+![install_suricata_tab]![install_suricata](https://github.com/user-attachments/assets/a931175c-15c3-4623-b2fc-e4f3b14831f3)
+
+
+![suricata_logs_tab]![view_fast_log](https://github.com/user-attachments/assets/e81a950d-1157-4199-bded-97a9e8e471f2)
+
+
+![custom_rules_tab]![custom_rules](https://github.com/user-attachments/assets/1b13c2dd-f831-4bbf-b9b5-6bde6c0e45e3)
+
+
+![analyze_fast_logs_tab]![analyze_fast](https://github.com/user-attachments/assets/6aadb667-2bf0-47a5-b8f7-51e93b250fad)
+
+
+
+![analyze_json_logs_Tab]![analyze_json](https://github.com/user-attachments/assets/df99dc3a-dd24-4d11-aacc-016a23fd4715)
+
 
 
 ## Contributing
