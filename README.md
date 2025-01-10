@@ -44,13 +44,15 @@ This project provides a graphical interface (GUI) for managing Suricata and Ansi
     ```
 
 ## Usage
+**⚠️ Warning:** Don't run the application in the background, or else the setup tab will not work!
+
 
 1. Run the application:
     ```sh
     chmod +x SAM.py
     ./SAM.py
     ```
-Warning: Don't run the application in background or else the setup tab will not work!
+
 
 2. Use the GUI to manage your Suricata and Ansible configurations:
     - **Setup Tab**: Generate and copy SSH keys to remote servers, and manage SSH identities.
