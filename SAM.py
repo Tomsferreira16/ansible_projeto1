@@ -787,6 +787,14 @@ class AnalyzeLogs:
         except ValueError:
             return False
 
+    # Function to extract date from log
+    def extract_date(self, log):
+        date_str = log.split('-')[0].strip()
+        try:
+            return datetime.strptime(date_str, "%m/%d/%Y")
+        except ValueError:
+            return datetime.min  # Return a minimum date if parsing fails
+
     # Function to clear filters
     def clear_filters(self):
         self.active_filters = {}
@@ -797,7 +805,7 @@ class AnalyzeLogs:
     # Function to update the active filters label
     def update_active_filters_label(self):
         if self.active_filters:
-            filters_text = ", ".join([f"{key}: {value}" for key, value in self.active_filters.items()])
+            self.filtered_logs.sort(key=lambda log: self.extract_date(log), reverse=not ascending)
             self.active_filters_label.config(text=f"Active Filters: {filters_text}")
         else:
             self.active_filters_label.config(text="Active Filters: None")
