@@ -21,8 +21,8 @@ This project provides a graphical interface (GUI) for managing Suricata and Ansi
 - **Install Suricata**: Install and configure Suricata on remote servers.
 - **View Suricata Logs**: View Suricata fast logs.
 - **Custom Rules Management**: Add, view, and delete custom Suricata rules.
-- **Analyze Logs**: Load and filter the fast.log by IP, date, and protocol.
-- **Analyze JSON Logs**: Load and filter the eve.json by IP, date, and protocol.
+- **Analyze Fast Logs**: Load and filter the Suricata file fast.log by IP, date, and protocol.
+- **Analyze JSON Logs**: Load and filter the Suricata file eve.json by IP, date, and protocol.
 
 ## Prerequisites
 
@@ -59,7 +59,7 @@ This project provides a graphical interface (GUI) for managing Suricata and Ansi
     - **Install Suricata Tab**: Install Suricata on remote servers.
     - **Suricata Logs Tab**: View and export Suricata logs.
     - **Custom Rules Tab**: Add, view, and delete custom Suricata rules.
-    - **Analyze Logs Tab**: Load and filter log files.
+    - **Analyze Fast Logs Tab**: Load and filter log files.
     - **Analyze JSON Logs Tab**: Load and filter JSON log files.
 
 ## Ansible Playbooks
