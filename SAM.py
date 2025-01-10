@@ -671,166 +671,157 @@ class CustomRules:
             messagebox.showerror("Error", f"An error occurred: {e}")
 
 class AnalyzeLogs:
-    # GUI for the Analyze Logs Tab
-    def __init__(self, gui):
-        self.gui = gui
-        self.logs = []
-        self.filtered_logs = []
-        self.active_filters = {}
-        self.analyze_frame = ttk.Frame(gui.notebook, padding="10")
-        gui.notebook.add(self.analyze_frame, text="Analyze Fast Logs")
-        self.inventory_file = inventory_file
+    class AnalyzeLogs:
+        # GUI for the Analyze Logs Tab
+        def __init__(self, gui):
+            self.gui = gui
+            self.logs = []
+            self.filtered_logs = []
+            self.active_filters = {}
+            self.analyze_frame = ttk.Frame(gui.notebook, padding="10")
+            gui.notebook.add(self.analyze_frame, text="Analyze Fast Logs")
+            self.inventory_file = inventory_file
 
-        # Create the text box to display log content
-        self.log_text = tk.Text(self.analyze_frame, wrap=tk.WORD, height=15, width=80, font=("Helvetica", 12))
-        self.log_text.grid(row=0, column=0, columnspan=4, padx=10, pady=10, sticky="nsew")
+            # Create the text box to display log content
+            self.log_text = tk.Text(self.analyze_frame, wrap=tk.WORD, height=15, width=80, font=("Helvetica", 12))
+            self.log_text.grid(row=0, column=0, columnspan=4, padx=10, pady=10, sticky="nsew")
 
-        # Button to load the log file
-        self.load_button = tk.Button(self.analyze_frame, text="Load Log File", command=self.load_log_file)
-        self.load_button.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
+            # Button to load the log file
+            self.load_button = tk.Button(self.analyze_frame, text="Load Log File", command=self.load_log_file)
+            self.load_button.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
 
-        # Filter buttons
-        self.filter_ip_button = tk.Button(self.analyze_frame, text="Filter by IP", command=self.filter_by_ip)
-        self.filter_ip_button.grid(row=2, column=0, padx=10, pady=5, sticky="ew")
+            # Filter buttons
+            self.filter_ip_button = tk.Button(self.analyze_frame, text="Filter by IP", command=self.filter_by_ip)
+            self.filter_ip_button.grid(row=2, column=0, padx=10, pady=5, sticky="ew")
 
-        self.filter_date_button = tk.Button(self.analyze_frame, text="Filter by Date", command=self.filter_by_date)
-        self.filter_date_button.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
+            self.filter_date_button = tk.Button(self.analyze_frame, text="Filter by Date", command=self.filter_by_date)
+            self.filter_date_button.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
 
-        self.filter_protocol_button = tk.Button(self.analyze_frame, text="Filter by Protocol", command=self.filter_by_protocol)
-        self.filter_protocol_button.grid(row=2, column=2, padx=10, pady=5, sticky="ew")
+            self.filter_protocol_button = tk.Button(self.analyze_frame, text="Filter by Protocol", command=self.filter_by_protocol)
+            self.filter_protocol_button.grid(row=2, column=2, padx=10, pady=5, sticky="ew")
 
-        self.clear_button = tk.Button(self.analyze_frame, text="Clear Filters", command=self.clear_filters)
-        self.clear_button.grid(row=2, column=3, padx=10, pady=5, sticky="ew")
+            self.clear_button = tk.Button(self.analyze_frame, text="Clear Filters", command=self.clear_filters)
+            self.clear_button.grid(row=2, column=3, padx=10, pady=5, sticky="ew")
 
-        # Sort buttons
-        self.sort_asc_button = tk.Button(self.analyze_frame, text="Sort Ascending", command=lambda: self.sort_logs(ascending=True))
-        self.sort_asc_button.grid(row=3, column=0, padx=10, pady=5, sticky="ew")
+            # Sort buttons
+            self.sort_asc_button = tk.Button(self.analyze_frame, text="Sort Ascending", command=lambda: self.sort_logs(ascending=True))
+            self.sort_asc_button.grid(row=3, column=0, padx=10, pady=5, sticky="ew")
 
-        self.sort_desc_button = tk.Button(self.analyze_frame, text="Sort Descending", command=lambda: self.sort_logs(ascending=False))
-        self.sort_desc_button.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
+            self.sort_desc_button = tk.Button(self.analyze_frame, text="Sort Descending", command=lambda: self.sort_logs(ascending=False))
+            self.sort_desc_button.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
 
-        # Label to display active filters
-        self.active_filters_label = tk.Label(self.analyze_frame, text="Active Filters: None")
-        self.active_filters_label.grid(row=4, column=0, columnspan=4, padx=10, pady=5, sticky="ew")
+            # Label to display active filters
+            self.active_filters_label = tk.Label(self.analyze_frame, text="Active Filters: None")
+            self.active_filters_label.grid(row=4, column=0, columnspan=4, padx=10, pady=5, sticky="ew")
 
-        # Configure rows and columns to expand with the window
-        self.analyze_frame.grid_rowconfigure(0, weight=1)  # Make text widget expand
-        self.analyze_frame.grid_rowconfigure(1, weight=0)
-        self.analyze_frame.grid_rowconfigure(2, weight=0)
-        self.analyze_frame.grid_rowconfigure(3, weight=0)
-        self.analyze_frame.grid_rowconfigure(4, weight=0)
-        self.analyze_frame.grid_columnconfigure(0, weight=1)
-        self.analyze_frame.grid_columnconfigure(1, weight=1)
-        self.analyze_frame.grid_columnconfigure(2, weight=1)
-        self.analyze_frame.grid_columnconfigure(3, weight=1)
+            # Configure rows and columns to expand with the window
+            self.analyze_frame.grid_rowconfigure(0, weight=1)  # Make text widget expand
+            self.analyze_frame.grid_rowconfigure(1, weight=0)
+            self.analyze_frame.grid_rowconfigure(2, weight=0)
+            self.analyze_frame.grid_rowconfigure(3, weight=0)
+            self.analyze_frame.grid_rowconfigure(4, weight=0)
+            self.analyze_frame.grid_columnconfigure(0, weight=1)
+            self.analyze_frame.grid_columnconfigure(1, weight=1)
+            self.analyze_frame.grid_columnconfigure(2, weight=1)
+            self.analyze_frame.grid_columnconfigure(3, weight=1)
 
-    # Function to load log file
-    def load_log_file(self):
-        # Run the Ansible playbook to fetch the fast.log file
-        try:
-            subprocess.run(
-                ["ansible-playbook", "-i", self.inventory_file, "get_fast_log.yml"],
-                check=True
-            )
-        except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"Failed to fetch log file: {e}")
-            return
+        # Function to load log file
+        def load_log_file(self):
+            # Run the Ansible playbook to fetch the fast.log file
+            try:
+                subprocess.run(
+                    ["ansible-playbook", "-i", self.inventory_file, "get_fast_log.yml"],
+                    check=True
+                )
+            except subprocess.CalledProcessError as e:
+                messagebox.showerror("Error", f"Failed to fetch log file: {e}")
+                return
 
-        # Automatically load the fast.log file
-        file_path = os.path.expanduser("~/ansible_projeto1/fast.log")
+            # Automatically load the fast.log file
+            file_path = os.path.expanduser("~/ansible_projeto1/fast.log")
 
-        try:
-            with open(file_path, "r") as file:
-                self.logs = [line.strip() for line in file]
-                self.filtered_logs = self.logs  # Initially, no filter, show all logs
-                self.display_logs(self.filtered_logs)
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to load log file: {e}")
+            try:
+                with open(file_path, "r") as file:
+                    self.logs = file.readlines()
+                    self.filtered_logs = self.logs  # Initially, no filter, show all logs
+                    self.display_logs(self.filtered_logs)
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to load log file: {e}")
 
-    # Function to display logs
-    def display_logs(self, logs):
-        self.log_text.delete(1.0, tk.END)  # Clear the text box
-        if logs:
-            self.log_text.insert(tk.END, '\n'.join(json.dumps(log, indent=4) for log in logs))  # Display logs in the text box
-        else:
-            self.log_text.insert(tk.END, "No logs to display.")
+        # Function to display logs
+        def display_logs(self, logs):
+            self.log_text.delete(1.0, tk.END)  # Clear the text box
+            if logs:
+                self.log_text.insert(tk.END, ''.join(logs))  # Display logs in the text box
+            else:
+                self.log_text.insert(tk.END, "No logs to display.")
 
-    # Function to filter logs by IP
-    def filter_by_ip(self):
-        ip = self.get_input("Enter IP Address to Filter by:")
-        if ip:
-            self.active_filters['ip'] = ip
-            self.apply_filters()
+        # Function to filter logs by IP
+        def filter_by_ip(self):
+            ip = self.get_input("Enter IP Address to Filter by:")
+            if ip:
+                self.active_filters['ip'] = ip
+                self.apply_filters()
 
-    # Function to filter logs by date
-    def filter_by_date(self):
-        date_str = self.get_input("Enter Date (MM/DD/YYYY) to Filter by:")
-        try:
-            # Validate the date format
-            date_obj = datetime.strptime(date_str, "%m/%d/%Y")
-            self.active_filters['date'] = date_obj
-            self.apply_filters()
-        except ValueError:
-            messagebox.showerror("Error", "Invalid date format. Please use MM/DD/YYYY.")
+        # Function to filter logs by date
+        def filter_by_date(self):
+            date_str = self.get_input("Enter Date (MM/DD/YYYY) to Filter by:")
+            try:
+                # Validate the date format
+                date_obj = datetime.strptime(date_str, "%m/%d/%Y")
+                self.active_filters['date'] = date_obj
+                self.apply_filters()
+            except ValueError:
+                messagebox.showerror("Error", "Invalid date format. Please use MM/DD/YYYY.")
 
-    # Function to filter logs by protocol
-    def filter_by_protocol(self):
-        protocol = self.get_input("Enter Protocol to Filter by:")
-        if protocol:
-            self.active_filters['protocol'] = protocol
-            self.apply_filters()
+        # Function to filter logs by protocol
+        def filter_by_protocol(self):
+            protocol = self.get_input("Enter Protocol to Filter by:")
+            if protocol:
+                self.active_filters['protocol'] = protocol
+                self.apply_filters()
 
-    # Function to apply all active filters
-    def apply_filters(self):
-        filtered_logs = self.logs
-        if 'ip' in self.active_filters:
-            filtered_logs = [log for log in filtered_logs if self.active_filters['ip'] in log.get('src_ip', '') or self.active_filters['ip'] in log.get('dest_ip', '')]
-        if 'date' in self.active_filters:
-            filtered_logs = [log for log in filtered_logs if self.match_date(log, self.active_filters['date'])]
-        if 'protocol' in self.active_filters:
-            filtered_logs = [log for log in filtered_logs if self.active_filters['protocol'].lower() in log.get('proto', '').lower()]
+        # Function to apply all active filters
+        def apply_filters(self):
+            filtered_logs = self.logs
+            if 'ip' in self.active_filters:
+                filtered_logs = [log for log in filtered_logs if self.active_filters['ip'] in log]
+            if 'date' in self.active_filters:
+                filtered_logs = [log for log in filtered_logs if self.active_filters['date'].strftime("%m/%d/%Y") in log]
+            if 'protocol' in self.active_filters:
+                filtered_logs = [log for log in filtered_logs if self.active_filters['protocol'].lower() in log.lower()]
 
-        self.filtered_logs = filtered_logs
-        self.display_logs(self.filtered_logs)
-        self.update_active_filters_label()
-
-    # Function to get input from user
-    def get_input(self, prompt):
-        input_dialog = tk.simpledialog.askstring("Input", prompt)
-        return input_dialog.strip() if input_dialog else None
-
-    # Function to match the date in the log line
-    def match_date(self, log, date_obj):
-        # Extract the date from the log dictionary
-        date_str = log.get('timestamp', '').split('T')[0]  # The date is at the start of the timestamp
-        try:
-            log_date_obj = datetime.strptime(date_str, "%Y-%m-%d")
-            return log_date_obj.date() == date_obj.date()
-        except ValueError:
-            return False
-
-    # Function to clear filters
-    def clear_filters(self):
-        self.active_filters = {}
-        self.filtered_logs = self.logs  # Reset to all logs
-        self.display_logs(self.filtered_logs)
-        self.update_active_filters_label()
-
-    # Function to update the active filters label
-    def update_active_filters_label(self):
-        if self.active_filters:
-            filters_text = ", ".join([f"{key}: {value}" for key, value in self.active_filters.items()])
-            self.active_filters_label.config(text=f"Active Filters: {filters_text}")
-        else:
-            self.active_filters_label.config(text="Active Filters: None")
-
-    # Function to sort logs
-    def sort_logs(self, ascending=True):
-        try:
-            self.filtered_logs.sort(key=lambda log: datetime.strptime(log.get('timestamp', ''), "%Y-%m-%dT%H:%M:%S.%f%z"), reverse=not ascending)
+            self.filtered_logs = filtered_logs
             self.display_logs(self.filtered_logs)
-        except ValueError:
-            messagebox.showerror("Error", "Failed to sort logs. Ensure logs have valid date format.")
+            self.update_active_filters_label()
+
+        # Function to get input from user
+        def get_input(self, prompt):
+            input_dialog = tk.simpledialog.askstring("Input", prompt)
+            return input_dialog.strip() if input_dialog else None
+
+        # Function to clear filters
+        def clear_filters(self):
+            self.active_filters = {}
+            self.filtered_logs = self.logs  # Reset to all logs
+            self.display_logs(self.filtered_logs)
+            self.update_active_filters_label()
+
+        # Function to update the active filters label
+        def update_active_filters_label(self):
+            if self.active_filters:
+                filters_text = ", ".join([f"{key}: {value}" for key, value in self.active_filters.items()])
+                self.active_filters_label.config(text=f"Active Filters: {filters_text}")
+            else:
+                self.active_filters_label.config(text="Active Filters: None")
+
+        # Function to sort logs
+        def sort_logs(self, ascending=True):
+            try:
+                self.filtered_logs.sort(key=lambda log: datetime.strptime(log.split()[0], "%m/%d/%Y"), reverse=not ascending)
+                self.display_logs(self.filtered_logs)
+            except ValueError:
+                messagebox.showerror("Error", "Failed to sort logs. Ensure logs have valid date format.")
 
 class JSONLogs:
     # GUI for the JSON Logs Tab
