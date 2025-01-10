@@ -1,5 +1,5 @@
 ---
-- name: Fetch eve.json from remote server
+- name: Fetch fast.log from remote server
   hosts: all
   tasks:
     - name: Ensure destination directory exists
@@ -7,10 +7,10 @@
       file:
         path: .
         state: directory
-    - name: Fetch eve.json file
+    - name: Fetch fast.log file
       become: yes
       fetch:
-        src: /var/log/suricata/eve.json
+        src: /var/log/suricata/fast.log
         dest: ./
         flat: yes
 
