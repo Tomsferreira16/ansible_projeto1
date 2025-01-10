@@ -828,6 +828,7 @@ class JSONLogs:
     def __init__(self, gui):
         self.gui = gui
         self.logs = []
+        self.inventory_file = inventory_file
         self.filtered_logs = []
         self.active_filters = {}
         self.json_logs_frame = ttk.Frame(gui.notebook, padding="10")
@@ -881,7 +882,7 @@ class JSONLogs:
         # Run the Ansible playbook to fetch the JSON log file
         try:
             subprocess.run(
-                ["ansible-playbook", "-i", self.gui.inventory_file, "get_eve_json.yml"],
+                ["ansible-playbook", "-i", self.inventory_file, "get_eve_json.yml"],
                 check=True
             )
         except subprocess.CalledProcessError as e:
