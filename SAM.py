@@ -805,7 +805,9 @@ class AnalyzeLogs:
     # Function to update the active filters label
     def update_active_filters_label(self):
         if self.active_filters:
+            ascending = True  # Define ascending variable
             self.filtered_logs.sort(key=lambda log: self.extract_date(log), reverse=not ascending)
+            filters_text = ", ".join([f"{key}: {value}" for key, value in self.active_filters.items()])  # Define filters_text variable
             self.active_filters_label.config(text=f"Active Filters: {filters_text}")
         else:
             self.active_filters_label.config(text="Active Filters: None")
