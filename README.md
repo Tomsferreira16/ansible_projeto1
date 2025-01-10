@@ -19,9 +19,10 @@ This project provides a graphical interface (GUI) for managing Suricata and Ansi
 
 - **Inventory Management**: Add, load, and delete servers from the inventory.
 - **Install Suricata**: Install and configure Suricata on remote servers.
-- **View Suricata Logs**: View and export Suricata logs as a txt.
+- **View Suricata Logs**: View Suricata fast logs.
 - **Custom Rules Management**: Add, view, and delete custom Suricata rules.
-- **Analyze Logs**: Load and filter log files by IP, date, and protocol.
+- **Analyze Logs**: Load and filter the fast.log by IP, date, and protocol.
+- **Analyze JSON Logs**: Load and filter the eve.json by IP, date, and protocol.
 
 ## Prerequisites
 
@@ -46,13 +47,11 @@ This project provides a graphical interface (GUI) for managing Suricata and Ansi
 ## Usage
 **⚠️ Warning:** Don't run the application in the background, or else the setup tab will not work!
 
-
 1. Run the application:
     ```sh
     chmod +x SAM.py
     ./SAM.py
     ```
-
 
 2. Use the GUI to manage your Suricata and Ansible configurations:
     - **Setup Tab**: Generate and copy SSH keys to remote servers, and manage SSH identities.
@@ -61,6 +60,7 @@ This project provides a graphical interface (GUI) for managing Suricata and Ansi
     - **Suricata Logs Tab**: View and export Suricata logs.
     - **Custom Rules Tab**: Add, view, and delete custom Suricata rules.
     - **Analyze Logs Tab**: Load and filter log files.
+    - **Analyze JSON Logs Tab**: Load and filter JSON log files.
 
 ## Ansible Playbooks
 
@@ -73,6 +73,8 @@ The following playbooks are included in the project:
 - **delete_custom_rule.yml**: Deletes a custom Suricata rule.
 - **view_custom_rules.yml**: Views custom Suricata rules.
 - **change_interface.yml**: Changes the network interface in the Suricata configuration.
+- **get_fast_log.yml**: Fetches the Suricata `fast.log` file.
+- **get_eve_json.yml**: Fetches the Suricata `eve.json` file.
 
 ## File Structure
 
@@ -87,6 +89,8 @@ ansible_projeto1/
 ├── delete_custom_rule.yml
 ├── view_custom_rules.yml
 ├── change_interface.yml
+├── get_fast_log.yml
+├── get_eve_json.yml
 └── README.md
 ```
 ## [Youtube Video](https://www.youtube.com/watch?v=ho-SKOFaFyw)
