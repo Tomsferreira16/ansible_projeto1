@@ -9,3 +9,13 @@
     - name: Output custom rules content
       debug:
         var: custom_rules.stdout
+        - name: Check if custom rules file exists
+          stat:
+          path: /etc/suricata/rules/custom.rules
+          register: custom_rules_file
+
+        - name: Create custom rules file if it does not exist
+          file:
+          path: /etc/suricata/rules/custom.rules
+          state: touch
+          when: not custom_rules_file.stat.exists
