@@ -729,7 +729,7 @@ class AnalyzeLogs:
         # Run the Ansible playbook to fetch the fast.log file
         try:
             subprocess.run(
-                ["ansible-playbook", "-i", self.gui.inventory_file, "get_fast_log.yml"],
+                ["ansible-playbook", "-i", self.inventory_file, "get_fast_log.yml"],
                 check=True
             )
         except subprocess.CalledProcessError as e:
