@@ -687,6 +687,10 @@ class AnalyzeLogs:
         self.sort_desc_button = tk.Button(self.analyze_frame, text="Sort Descending", command=lambda: self.sort_logs(ascending=False))
         self.sort_desc_button.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
 
+        # Export button
+        self.export_button = tk.Button(self.analyze_frame, text="Export Logs", command=self.export_logs)
+        self.export_button.grid(row=3, column=2, padx=10, pady=5, sticky="ew")
+
         # Label to display active filters
         self.active_filters_label = tk.Label(self.analyze_frame, text="Active Filters: None")
         self.active_filters_label.grid(row=4, column=0, columnspan=4, padx=10, pady=5, sticky="ew")
@@ -818,6 +822,17 @@ class AnalyzeLogs:
         except ValueError:
             messagebox.showerror("Error", "Failed to sort logs. Ensure logs have valid date format.")
 
+    # Function to export logs with applied filters
+    def export_logs(self):
+        export_path = filedialog.asksaveasfilename(defaultextension=".log", filetypes=[("Log files", "*.log"), ("All files", "*.*")])
+        if export_path:
+            try:
+                with open(export_path, "w") as file:
+                    file.write('\n'.join(self.filtered_logs))
+                messagebox.showinfo("Success", f"Logs exported successfully to {export_path}")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to export logs: {e}")
+
 class JSONLogs:
     # GUI for the JSON Logs Tab
     def __init__(self, gui):
@@ -856,6 +871,10 @@ class JSONLogs:
 
         self.sort_desc_button = tk.Button(self.json_logs_frame, text="Sort Descending", command=lambda: self.sort_logs(ascending=False))
         self.sort_desc_button.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
+
+        # Export button
+        self.export_button = tk.Button(self.json_logs_frame, text="Export Logs", command=self.export_logs)
+        self.export_button.grid(row=3, column=2, padx=10, pady=5, sticky="ew")
 
         # Label to display active filters
         self.active_filters_label = tk.Label(self.json_logs_frame, text="Active Filters: None")
@@ -979,6 +998,17 @@ class JSONLogs:
             self.display_logs(self.filtered_logs)
         except ValueError:
             messagebox.showerror("Error", "Failed to sort logs. Ensure logs have valid date format.")
+
+    # Function to export logs with applied filters
+    def export_logs(self):
+        export_path = filedialog.asksaveasfilename(defaultextension=".json", filetypes=[("JSON files", "*.json"), ("All files", "*.*")])
+        if export_path:
+            try:
+                with open(export_path, "w") as file:
+                    json.dump(self.filtered_logs, file, indent=4)
+                messagebox.showinfo("Success", f"Logs exported successfully to {export_path}")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to export logs: {e}")
 
 # ---------------------- Main Program ----------------------
 if __name__ == "__main__":
