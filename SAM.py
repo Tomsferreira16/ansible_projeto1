@@ -413,10 +413,6 @@ class SuricataLogs:
         self.log_text = tk.Text(self.logs_frame, height=15, width=60)
         self.log_text.grid(row=1, columnspan=2, padx=5, pady=5, sticky="nsew")
 
-        # Export Logs Button for TXT
-        self.export_button = tk.Button(self.logs_frame, text="Export Logs to TXT", command=self.export_logs_to_txt)
-        self.export_button.grid(row=2, columnspan=2, pady=10, sticky="ew")
-
         # Ensure the logs text box expands with the window
         self.logs_frame.grid_rowconfigure(1, weight=1)
         self.logs_frame.grid_columnconfigure(0, weight=1)
@@ -490,24 +486,6 @@ class SuricataLogs:
 
         else:
             return "No log content found."  # In case no log content is found
-
-    #Function to export logs to a TXT file so later we can analyze it  
-    def export_logs_to_txt(self):
-        # Get the log content from the text widget
-        log_content = self.log_text.get(1.0, tk.END).strip()
-
-        # Check if there is any log content
-        if log_content:
-            try:
-                # Use the expanded home directory path
-                export_path = os.path.expanduser("~/ansible_projeto1/suricata_logs.txt")
-                with open(export_path, "w") as txt_file:
-                    txt_file.write(log_content)
-                messagebox.showinfo("Success", f"Logs exported to TXT successfully at {export_path}.")
-            except Exception as e:
-                messagebox.showerror("Error", f"Failed to export logs to TXT: {e}")
-        else:
-            messagebox.showwarning("Warning", "No log content to export.")
 
 class CustomRules:
     #GUI for the Custom Rules Tab
@@ -751,7 +729,7 @@ class AnalyzeLogs:
     def display_logs(self, logs):
         self.log_text.delete(1.0, tk.END)  # Clear the text box
         if logs:
-            self.log_text.insert(tk.END, '\n'.join(json.dumps(log, indent=4) for log in logs))  # Display logs in the text box
+            self.log_text.insert(tk.END, '\n'.join(logs))  # Display logs in the text box
         else:
             self.log_text.insert(tk.END, "No logs to display.")
 
@@ -784,11 +762,11 @@ class AnalyzeLogs:
     def apply_filters(self):
         filtered_logs = self.logs
         if 'ip' in self.active_filters:
-            filtered_logs = [log for log in filtered_logs if self.active_filters['ip'] in log.get('src_ip', '') or self.active_filters['ip'] in log.get('dest_ip', '')]
+            filtered_logs = [log for log in filtered_logs if self.active_filters['ip'] in log]
         if 'date' in self.active_filters:
             filtered_logs = [log for log in filtered_logs if self.match_date(log, self.active_filters['date'])]
         if 'protocol' in self.active_filters:
-            filtered_logs = [log for log in filtered_logs if self.active_filters['protocol'].lower() in log.get('proto', '').lower()]
+            filtered_logs = [log for log in filtered_logs if self.active_filters['protocol'].lower() in log.lower()]
 
         self.filtered_logs = filtered_logs
         self.display_logs(self.filtered_logs)
@@ -801,10 +779,10 @@ class AnalyzeLogs:
 
     # Function to match the date in the log line
     def match_date(self, log, date_obj):
-        # Extract the date from the log dictionary
-        date_str = log.get('timestamp', '').split('T')[0]  # The date is at the start of the timestamp
+        # Extract the date from the log line
+        date_str = log.split('-')[0]  # The date is at the start of the log line
         try:
-            log_date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+            log_date_obj = datetime.strptime(date_str, "%m/%d/%Y")
             return log_date_obj.date() == date_obj.date()
         except ValueError:
             return False
@@ -827,7 +805,7 @@ class AnalyzeLogs:
     # Function to sort logs
     def sort_logs(self, ascending=True):
         try:
-            self.filtered_logs.sort(key=lambda log: datetime.strptime(log.get('timestamp', ''), "%Y-%m-%dT%H:%M:%S.%f%z"), reverse=not ascending)
+            self.filtered_logs.sort(key=lambda log: datetime.strptime(log.split('-')[0], "%m/%d/%Y"), reverse=not ascending)
             self.display_logs(self.filtered_logs)
         except ValueError:
             messagebox.showerror("Error", "Failed to sort logs. Ensure logs have valid date format.")
