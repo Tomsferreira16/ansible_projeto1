@@ -5,7 +5,7 @@
     - name: Ensure destination directory exists
       become: yes
       file:
-        path: ./var/log/suricata
+        path: .
         state: directory
     - name: Fetch eve.json file
       become: yes
