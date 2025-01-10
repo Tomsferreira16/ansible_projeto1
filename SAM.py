@@ -741,7 +741,7 @@ class AnalyzeLogs:
 
         try:
             with open(file_path, "r") as file:
-                self.logs = [json.loads(line) for line in file]
+                self.logs = [line.strip() for line in file]
                 self.filtered_logs = self.logs  # Initially, no filter, show all logs
                 self.display_logs(self.filtered_logs)
         except Exception as e:

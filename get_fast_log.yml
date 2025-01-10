@@ -5,12 +5,12 @@
     - name: Ensure destination directory exists
       become: yes
       file:
-        path: .
+        path: ~/var/log/suricata/fast.log
         state: directory
     - name: Fetch fast.log file
       become: yes
       fetch:
         src: /var/log/suricata/fast.log
-        dest: ./
+        dest: "{{ ansible_env.HOME }}/ansible_projeto1/"
         flat: yes
 
