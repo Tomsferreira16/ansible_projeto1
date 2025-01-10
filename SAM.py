@@ -789,9 +789,9 @@ class AnalyzeLogs:
 
     # Function to extract date from log
     def extract_date(self, log):
-        date_str = log.split('-')[0].strip()
+        date_str = log.split('-')[0].strip() + '-' + log.split('-')[1].split()[0].strip()
         try:
-            return datetime.strptime(date_str, "%m/%d/%Y")
+            return datetime.strptime(date_str, "%m/%d/%Y-%H:%M:%S.%f")
         except ValueError:
             return datetime.min  # Return a minimum date if parsing fails
 
