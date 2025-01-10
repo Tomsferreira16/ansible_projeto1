@@ -889,10 +889,8 @@ class JSONLogs:
             messagebox.showerror("Error", f"Failed to fetch JSON log file: {e}")
             return
 
-        # Open file dialog to load the .json log file
-        file_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
-        if not file_path:
-            return
+        # Automatically load the eve.json file
+        file_path = os.path.expanduser("~/ansible_projeto1/eve.json")
 
         try:
             with open(file_path, "r") as file:
