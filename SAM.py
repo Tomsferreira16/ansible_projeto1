@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog
+from tkinter import ttk, messagebox, filedialog, simpledialog
 import subprocess
 import os
 import re
@@ -805,9 +805,7 @@ class AnalyzeLogs:
     # Function to update the active filters label
     def update_active_filters_label(self):
         if self.active_filters:
-            ascending = True  # Define ascending variable
-            self.filtered_logs.sort(key=lambda log: self.extract_date(log), reverse=not ascending)
-            filters_text = ", ".join([f"{key}: {value}" for key, value in self.active_filters.items()])  # Define filters_text variable
+            filters_text = ", ".join([f"{key}: {value}" for key, value in self.active_filters.items()])
             self.active_filters_label.config(text=f"Active Filters: {filters_text}")
         else:
             self.active_filters_label.config(text="Active Filters: None")
