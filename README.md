@@ -21,8 +21,8 @@ This project provides a graphical interface (GUI) for managing Suricata and Ansi
 - **Install Suricata**: Install and configure Suricata on remote servers.
 - **View Suricata Logs**: View Suricata fast logs.
 - **Custom Rules Management**: Add, view, and delete custom Suricata rules.
-- **Analyze Fast Logs**: Load and filter the Suricata file fast.log by IP, date, and protocol.
-- **Analyze JSON Logs**: Load and filter the Suricata file eve.json by IP, date, and protocol.
+- **Analyze Fast Logs**: Load, filter and export the Suricata file fast.log by IP, date, and protocol.
+- **Analyze JSON Logs**: Load, filter and export the Suricata file eve.json by IP, date, and protocol.
 
 ## Prerequisites
 
@@ -45,7 +45,7 @@ This project provides a graphical interface (GUI) for managing Suricata and Ansi
     ```
 
 ## Usage
-**⚠️ Warning:** Don't run the application in the background, or else the setup tab will not work!
+**⚠️ Warning:** Don't run the application in the background, or else some functions will not work!
 
 1. Run the application:
     ```sh
@@ -107,10 +107,11 @@ ansible_projeto1/
 
 ![custom_rules_tab](https://github.com/user-attachments/assets/67dba868-b89a-4236-9a87-ca4ec306d3b8)
 
-![analyze_fast_logs_tab](https://github.com/user-attachments/assets/0e1fc8dc-951e-443f-b385-7853e48be437)
+![analyze_fast_logs_tab](https://github.com/user-attachments/assets/ce5aea1a-673e-48b4-ad1b-7ecb422f703b)
 
 
-![analyze_json_logs_Tab](https://github.com/user-attachments/assets/c3805771-2343-402c-8829-431dec93edd5)
+![analyze_json_logs_Tab](https://github.com/user-attachments/assets/336df88a-0a4f-4cec-a88a-e982ee487fe4)
+
 
 ## Contributing
 
