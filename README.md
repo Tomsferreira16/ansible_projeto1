@@ -16,7 +16,7 @@ This project provides a graphical interface (GUI) for managing Suricata and Ansi
 - [License](#license)
 
 ## Features
-
+- **Setup**: Create a Private and Public key pair, see keys on the remote servers.
 - **Inventory Management**: Add, load, and delete servers from the inventory.
 - **Install Suricata**: Install and configure Suricata on remote servers.
 - **View Suricata Logs**: View Suricata fast logs.
