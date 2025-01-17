@@ -29,213 +29,212 @@ class SuricataAnsibleGUI:
         self.json_logs_tab = JSONLogs(self)
 
 class SetupTab:
-    #GUI for the Setup Tab
-    def __init__(self, gui):
-        self.gui = gui
-        self.inventory_file = inventory_file
-        self.setup_frame = ttk.Frame(gui.notebook, padding="10")
-        gui.notebook.add(self.setup_frame, text="Setup")
-        self.setup_frame.grid_columnconfigure(0, weight=1, uniform="equal")
-        self.setup_frame.grid_columnconfigure(1, weight=2, uniform="equal")
+    class SetupTab:
+        # GUI for the Setup Tab
+        def __init__(self, gui):
+            self.gui = gui
+            self.inventory_file = inventory_file
+            self.setup_frame = ttk.Frame(gui.notebook, padding="10")
+            gui.notebook.add(self.setup_frame, text="Setup")
+            self.setup_frame.grid_columnconfigure(0, weight=1, uniform="equal")
+            self.setup_frame.grid_columnconfigure(1, weight=2, uniform="equal")
 
-        self.setup_frame.grid_rowconfigure(0, weight=0)
-        self.setup_frame.grid_rowconfigure(1, weight=0)
-        self.setup_frame.grid_rowconfigure(2, weight=0)
-        self.setup_frame.grid_rowconfigure(3, weight=0)
-        self.setup_frame.grid_rowconfigure(4, weight=0)
-        self.setup_frame.grid_rowconfigure(5, weight=0)
-        self.setup_frame.grid_rowconfigure(6, weight=1)
-        self.setup_frame.grid_rowconfigure(7, weight=0)
+            self.setup_frame.grid_rowconfigure(0, weight=0)
+            self.setup_frame.grid_rowconfigure(1, weight=0)
+            self.setup_frame.grid_rowconfigure(2, weight=0)
+            self.setup_frame.grid_rowconfigure(3, weight=0)
+            self.setup_frame.grid_rowconfigure(4, weight=0)
+            self.setup_frame.grid_rowconfigure(5, weight=0)
+            self.setup_frame.grid_rowconfigure(6, weight=0)
+            self.setup_frame.grid_rowconfigure(7, weight=1)
+            self.setup_frame.grid_rowconfigure(8, weight=0)
 
-        # SSH Key Name
-        self.key_name_label = tk.Label(self.setup_frame, text="SSH Key Name:")
-        self.key_name_label.grid(row=0, column=0, sticky="w", padx=5, pady=5)
-        self.key_name_entry = tk.Entry(self.setup_frame)
-        self.key_name_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
+            # SSH Key Name
+            self.key_name_label = tk.Label(self.setup_frame, text="SSH Key Name:")
+            self.key_name_label.grid(row=0, column=0, sticky="w", padx=5, pady=5)
+            self.key_name_entry = tk.Entry(self.setup_frame)
+            self.key_name_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
 
-        # SSH Key Comment
-        self.comment_label = tk.Label(self.setup_frame, text="SSH Key Comment:")
-        self.comment_label.grid(row=1, column=0, sticky="w", padx=5, pady=5)
-        self.comment_entry = tk.Entry(self.setup_frame)
-        self.comment_entry.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
+            # SSH Key Comment
+            self.comment_label = tk.Label(self.setup_frame, text="SSH Key Comment:")
+            self.comment_label.grid(row=1, column=0, sticky="w", padx=5, pady=5)
+            self.comment_entry = tk.Entry(self.setup_frame)
+            self.comment_entry.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
 
-        # Server IPs
-        self.server_ips_label = tk.Label(self.setup_frame, text="Server IPs (comma separated):")
-        self.server_ips_label.grid(row=2, column=0, sticky="w", padx=5, pady=5)
-        self.server_ips_entry = tk.Entry(self.setup_frame)
-        self.server_ips_entry.grid(row=2, column=1, padx=5, pady=5, sticky="ew")
+            # Server IPs
+            self.server_ips_label = tk.Label(self.setup_frame, text="Server IPs (comma separated):")
+            self.server_ips_label.grid(row=2, column=0, sticky="w", padx=5, pady=5)
+            self.server_ips_entry = tk.Entry(self.setup_frame)
+            self.server_ips_entry.grid(row=2, column=1, padx=5, pady=5, sticky="ew")
 
-        # Create SSH Key Button
-        self.create_key_button = tk.Button(self.setup_frame, text="Create & Copy Public SSH Key To Remote Server", command=self.create_and_copy_key)
-        self.create_key_button.grid(row=3, columnspan=2, pady=10, sticky="ew")
+            # Create SSH Key Button
+            self.create_key_button = tk.Button(self.setup_frame, text="Create & Copy Public SSH Key To Remote Server", command=self.create_and_copy_key)
+            self.create_key_button.grid(row=3, columnspan=2, pady=10, sticky="ew")
 
-        # Private Key Path
-        private_key_label = tk.Label(self.setup_frame, text="Enter Private Key Path:")
-        private_key_label.grid(row=4, column=0, sticky="w", padx=5, pady=5)
-        self.private_key_entry = tk.Entry(self.setup_frame)
-        self.private_key_entry.grid(row=4, column=1, padx=5, pady=5, sticky="ew")
+            # Private Key Path
+            private_key_label = tk.Label(self.setup_frame, text="Enter Private Key Path:")
+            private_key_label.grid(row=4, column=0, sticky="w", padx=5, pady=5)
+            self.private_key_entry = tk.Entry(self.setup_frame)
+            self.private_key_entry.grid(row=4, column=1, padx=5, pady=5, sticky="ew")
 
-        # Add SSH Identity Button
-        self.ssh_idd_add_button = tk.Button(self.setup_frame, text="Add SSH identity", command=self.add_ssh_identity)
-        self.ssh_idd_add_button.grid(row=5, columnspan=2, pady=10, sticky="ew")
+            # Add SSH Identity Button
+            self.ssh_idd_add_button = tk.Button(self.setup_frame, text="Add SSH identity", command=self.add_ssh_identity)
+            self.ssh_idd_add_button.grid(row=5, columnspan=2, pady=10, sticky="ew")
 
-        # Remote Key Path
-        remote_key_path_label = tk.Label(self.setup_frame, text="Enter Remote SSH Key Path:")
-        remote_key_path_label.grid(row=6, column=0, sticky="w", padx=5, pady=5)
-        self.remote_key_path_entry = tk.Entry(self.setup_frame)
-        self.remote_key_path_entry.grid(row=6, column=1, padx=5, pady=5, sticky="ew")
+            # Remote Key Path
+            remote_key_path_label = tk.Label(self.setup_frame, text="Enter Remote SSH Key Path:")
+            remote_key_path_label.grid(row=6, column=0, sticky="w", padx=5, pady=5)
+            self.remote_key_path_entry = tk.Entry(self.setup_frame)
+            self.remote_key_path_entry.grid(row=6, column=1, padx=5, pady=5, sticky="ew")
 
-        # List SSH Keys Button
-        self.ls_button = tk.Button(self.setup_frame, text="List Remote SSH keys", command=self.list_directory)
-        self.ls_button.grid(row=7, columnspan=2, pady=10, sticky="ew")
+            # List SSH Keys Button
+            self.ls_button = tk.Button(self.setup_frame, text="List Remote SSH keys", command=self.list_directory)
+            self.ls_button.grid(row=7, columnspan=2, pady=10, sticky="ew")
 
-        # SSH Keys on Remote Server
-        self.ls_label = tk.Label(self.setup_frame, text="SSH Keys on the remote server:")
-        self.ls_label.grid(row=8, column=0, sticky="w", padx=5, pady=5)
-        self.ls_textbox = tk.Text(self.setup_frame, height=20, width=40)
-        self.ls_textbox.grid(row=8, column=1, padx=5, pady=5, sticky="ew")
+            # SSH Keys on Remote Server
+            self.ls_label = tk.Label(self.setup_frame, text="SSH Keys on the remote server:")
+            self.ls_label.grid(row=8, column=0, sticky="w", padx=5, pady=5)
+            self.ls_textbox = tk.Text(self.setup_frame, height=20, width=40)
+            self.ls_textbox.grid(row=8, column=1, padx=5, pady=5, sticky="nsew")
 
-    # Function to create and copy SSH key to remote server, this part cant be run on background mode because it needs user input
-    def create_and_copy_key(self):
-        key_name = self.key_name_entry.get()
-        comment = self.comment_entry.get()
-        ips = self.server_ips_entry.get()
+        # Function to create and copy SSH key to remote server, this part cant be run on background mode because it needs user input
+        def create_and_copy_key(self):
+            key_name = self.key_name_entry.get()
+            comment = self.comment_entry.get()
+            ips = self.server_ips_entry.get()
 
-        # Debugging print to check the raw inputs
-        print(f"Key Name: '{key_name}', Comment: '{comment}', IPs: '{ips}'")
+            # Debugging print to check the raw inputs
+            print(f"Key Name: '{key_name}', Comment: '{comment}', IPs: '{ips}'")
 
-        if not key_name or not comment or not ips:
-            messagebox.showerror("Error", "All fields must be filled out.")
-            return
+            if not key_name or not comment or not ips:
+                messagebox.showerror("Error", "All fields must be filled out.")
+                return
 
-        ips = ips.split(",")  # Split the IPs by comma
+            ips = ips.split(",")  # Split the IPs by comma
 
-        try:
-            # Get the expanded home directory path
-            ssh_dir = os.path.expanduser("~/.ssh/")
+            try:
+                # Get the expanded home directory path
+                ssh_dir = os.path.expanduser("~/.ssh/")
 
-            # Check if the SSH key already exists
-            key_exists = os.path.isfile(f"{ssh_dir}{key_name}")  # Check if private key exists
+                # Check if the SSH key already exists
+                key_exists = os.path.isfile(f"{ssh_dir}{key_name}")  # Check if private key exists
 
-            if key_exists:
-                # If the key exists, use it directly
-                messagebox.showinfo("Info", f"Using existing SSH key: {key_name}")
-            else:
-                # If the key does not exist, generate a new one
-                subprocess.run([
-                    "ssh-keygen", "-t", "ed25519", "-f", f"{ssh_dir}{key_name}", "-C", comment, "-N", ""
-                ], check=True)
-                messagebox.showinfo("Info", f"Created new SSH key: {key_name}")
-
-            # Step 2: Copy the public key to the remote servers
-            for ip in ips:
-                ip = ip.strip()  # Clean up the IP
-                command = ["ssh-copy-id", "-i", f"{ssh_dir}{key_name}.pub", ip]
-                print(f"Running command: {' '.join(command)}")  # Print the command being run
-                subprocess.run(command, check=True)
-
-            # Step 3: Create an alias for the ssh-agent setup and add it to .bashrc for persistence
-            alias_command = "alias ssha='eval $(ssh-agent) && ssh-add'"
-            with open(os.path.expanduser("~/.bashrc"), "a") as bashrc_file:
-                bashrc_file.write(f"\n{alias_command}\n")
-
-            # Step 4: start the ssh-agent and add the private key
-            subprocess.run(f"eval $(ssh-agent) && ssh-add {ssh_dir}{key_name}", check=True, shell=True)
-
-            # Inform the user of success
-            messagebox.showinfo("Success", "SSH Key copied to servers and SSH agent configured.")
-        except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"An error occurred: {e}")
-        except IOError as e:
-            messagebox.showerror("Error", f"An error occurred when writing to .bashrc: {e}")
-
-
-
-        
-    #Function to list SSH keys on remote server
-    def list_directory(self):
-        # Get the SSH key path from the input field and expand '~' to full path
-        remote_key_path = os.path.expanduser(self.remote_key_path_entry.get())
-
-        if not remote_key_path:
-            self.ls_textbox.delete("1.0", tk.END)
-            self.ls_textbox.insert(tk.END, "Please enter a valid SSH key path.\n")
-            return
-
-        # Assuming self.inventory_file is already set correctly
-        if not hasattr(self, 'inventory_file'):
-            self.ls_textbox.delete("1.0", tk.END)
-            self.ls_textbox.insert(tk.END, "Inventory file is not set.\n")
-            return
-
-        # Playbook command with the SSH key path passed as a variable
-        playbook_command = [
-            "ansible-playbook",
-            "-i", self.inventory_file,
-            "-e", f"ssh_key_path={remote_key_path}",  # Pass the expanded SSH key path
-            "ls_ssh_keys.yml"
-        ]
-
-        try:
-            # Execute the ansible-playbook command and capture the output
-            result = subprocess.run(playbook_command, capture_output=True, text=True)
-
-            # Check if the playbook ran successfully
-            if result.returncode == 0:
-                # Clear the TextBox before inserting new content
-                self.ls_textbox.delete("1.0", tk.END)
-
-                # Extract the output for each host
-                output_lines = result.stdout.splitlines()
-                host_key_contents = []
-
-                for line in output_lines:
-                    if '"msg":' in line:
-                        # Extract the SSH key content from the "msg" line
-                        key_contents = line.split('"msg":')[1].strip().strip('"')
-                        host_key_contents.append(key_contents)
-
-                if host_key_contents:
-                    # Insert the SSH keys for each host into the TextBox
-                    self.ls_textbox.insert(tk.END, "\n".join(host_key_contents) + "\n")
+                if key_exists:
+                    # If the key exists, use it directly
+                    messagebox.showinfo("Info", f"Using existing SSH key: {key_name}")
                 else:
-                    self.ls_textbox.insert(tk.END, "No authorized keys found or unable to access the file.")
-            else:
+                    # If the key does not exist, generate a new one
+                    subprocess.run([
+                        "ssh-keygen", "-t", "ed25519", "-f", f"{ssh_dir}{key_name}", "-C", comment, "-N", ""
+                    ], check=True)
+                    messagebox.showinfo("Info", f"Created new SSH key: {key_name}")
+
+                # Step 2: Copy the public key to the remote servers
+                for ip in ips:
+                    ip = ip.strip()  # Clean up the IP
+                    command = ["ssh-copy-id", "-i", f"{ssh_dir}{key_name}.pub", ip]
+                    print(f"Running command: {' '.join(command)}")  # Print the command being run
+                    subprocess.run(command, check=True)
+
+                # Step 3: Create an alias for the ssh-agent setup and add it to .bashrc for persistence
+                alias_command = "alias ssha='eval $(ssh-agent) && ssh-add'"
+                with open(os.path.expanduser("~/.bashrc"), "a") as bashrc_file:
+                    bashrc_file.write(f"\n{alias_command}\n")
+
+                # Step 4: start the ssh-agent and add the private key
+                subprocess.run(f"eval $(ssh-agent) && ssh-add {ssh_dir}{key_name}", check=True, shell=True)
+
+                # Inform the user of success
+                messagebox.showinfo("Success", "SSH Key copied to servers and SSH agent configured.")
+            except subprocess.CalledProcessError as e:
+                messagebox.showerror("Error", f"An error occurred: {e}")
+            except IOError as e:
+                messagebox.showerror("Error", f"An error occurred when writing to .bashrc: {e}")
+
+        # Function to list SSH keys on remote server
+        def list_directory(self):
+            # Get the SSH key path from the input field and expand '~' to full path
+            remote_key_path = os.path.expanduser(self.remote_key_path_entry.get())
+
+            if not remote_key_path:
                 self.ls_textbox.delete("1.0", tk.END)
-                # Show error message if the playbook failed
-                self.ls_textbox.insert(tk.END, f"Error: {result.stderr}")
+                self.ls_textbox.insert(tk.END, "Please enter a valid SSH key path.\n")
+                return
 
-        except Exception as e:
-            self.ls_textbox.delete("1.0", tk.END)
-            self.ls_textbox.insert(tk.END, f"Exception: {str(e)}")
-    
-    #Function to add SSH identity, its necessary to comunicate with the remote server without password everytime we reboot the machine
-    def add_ssh_identity(self):
-        private_key_path = self.private_key_entry.get()  # Get private key path from input field
+            # Assuming self.inventory_file is already set correctly
+            if not hasattr(self, 'inventory_file'):
+                self.ls_textbox.delete("1.0", tk.END)
+                self.ls_textbox.insert(tk.END, "Inventory file is not set.\n")
+                return
 
-        # Expand '~' to the full home directory path
-        private_key_path = os.path.expanduser(private_key_path)
+            # Playbook command with the SSH key path passed as a variable
+            playbook_command = [
+                "ansible-playbook",
+                "-i", self.inventory_file,
+                "-e", f"ssh_key_path={remote_key_path}",  # Pass the expanded SSH key path
+                "ls_ssh_keys.yml"
+            ]
 
-        # Debugging print to check the input value
-        print(f"Private Key Path: {repr(private_key_path)}")
+            try:
+                # Execute the ansible-playbook command and capture the output
+                result = subprocess.run(playbook_command, capture_output=True, text=True)
 
-        if not private_key_path:
-            messagebox.showerror("Error", "Private key path must be provided.")
-            return
+                # Check if the playbook ran successfully
+                if result.returncode == 0:
+                    # Clear the TextBox before inserting new content
+                    self.ls_textbox.delete("1.0", tk.END)
 
-        # Check if the private key file exists
-        if not os.path.isfile(private_key_path):
-            messagebox.showerror("Error", f"The private key file does not exist: {private_key_path}")
-            return
+                    # Extract the output for each host
+                    output_lines = result.stdout.splitlines()
+                    host_key_contents = []
 
-        try:
-            # Run the full command instead of alias
-            subprocess.run(f"eval $(ssh-agent) && ssh-add {private_key_path}", check=True, shell=True)
+                    for line in output_lines:
+                        if '"msg":' in line:
+                            # Extract the SSH key content from the "msg" line
+                            key_contents = line.split('"msg":')[1].strip().strip('"')
+                            host_key_contents.append(key_contents)
 
-            # Inform the user of success
-            messagebox.showinfo("Success", "SSH identity added successfully.")
-        except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"An error occurred: {e}")
+                    if host_key_contents:
+                        # Insert the SSH keys for each host into the TextBox
+                        self.ls_textbox.insert(tk.END, "\n".join(host_key_contents) + "\n")
+                    else:
+                        self.ls_textbox.insert(tk.END, "No authorized keys found or unable to access the file.")
+                else:
+                    self.ls_textbox.delete("1.0", tk.END)
+                    # Show error message if the playbook failed
+                    self.ls_textbox.insert(tk.END, f"Error: {result.stderr}")
+
+            except Exception as e:
+                self.ls_textbox.delete("1.0", tk.END)
+                self.ls_textbox.insert(tk.END, f"Exception: {str(e)}")
+
+        # Function to add SSH identity, its necessary to communicate with the remote server without password every time we reboot the machine
+        def add_ssh_identity(self):
+            private_key_path = self.private_key_entry.get()  # Get private key path from input field
+
+            # Expand '~' to the full home directory path
+            private_key_path = os.path.expanduser(private_key_path)
+
+            # Debugging print to check the input value
+            print(f"Private Key Path: {repr(private_key_path)}")
+
+            if not private_key_path:
+                messagebox.showerror("Error", "Private key path must be provided.")
+                return
+
+            # Check if the private key file exists
+            if not os.path.isfile(private_key_path):
+                messagebox.showerror("Error", f"The private key file does not exist: {private_key_path}")
+                return
+
+            try:
+                # Run the full command instead of alias
+                subprocess.run(f"eval $(ssh-agent) && ssh-add {private_key_path}", check=True, shell=True)
+
+                # Inform the user of success
+                messagebox.showinfo("Success", "SSH identity added successfully.")
+            except subprocess.CalledProcessError as e:
+                messagebox.showerror("Error", f"An error occurred: {e}")
 
 class InventoryTab:
     #GUI for the Inventory Tab
